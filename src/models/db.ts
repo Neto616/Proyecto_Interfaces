@@ -1,4 +1,3 @@
-import { error } from 'console';
 import dotenv from 'dotenv';
 dotenv.config();
 import mysql, { PoolOptions } from "mysql2/promise";
