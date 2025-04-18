@@ -7,15 +7,13 @@ import DB from "./db";
 import { all_users } from '../types/tipos_usuarios';
 import { FieldPacket } from 'mysql2';
 
-class Usuario extends DB {
+class Usuario{
     constructor(
         public correo: string, 
         private contrasena: string,
         public nombre: string,
         public apellido: string
-    ) {
-        super();
-    }
+    ) {}
 
     public getCorreo(): string {
         return this.correo;
@@ -29,7 +27,7 @@ class Usuario extends DB {
         return this.contrasena = contrasena;
     }
 
-    private encodePass(): string {
+    public encodePass(): string {
         try {
             const cryptr: Cryptr = new Cryptr((process.env.SECRET || ""), {saltLength: 10});
             const contrasena: string = this.contrasena;
@@ -40,9 +38,9 @@ class Usuario extends DB {
             console.log(error);
             return "";
         }
-    }
+    };
 
-    private decodePass(contrasena: string): string {
+    public decodePass(contrasena: string): string {
         try {
             const cryptr: Cryptr = new Cryptr((process.env.SECRET || ""), {saltLength: 10});
             return cryptr.decrypt(contrasena);
@@ -50,11 +48,13 @@ class Usuario extends DB {
             console.log(error);
             return "";
         }
-    }
+    };
+}
 
-    public async existUser(): Promise<boolean> {
+class UsuarioRepository extends DB {
+    private async existUser(usuario: Usuario): Promise<boolean> {
         try {
-            if(!this.connection) await this.PoolConnect();
+            await this.checkConnection()
 
             const [rows] = await this.connection.execute(`
                 select 
@@ -62,7 +62,7 @@ class Usuario extends DB {
                 from usuarios 
                 where correo = ?
                 limit 1`,
-                [this.correo]
+                [usuario.correo]
             ) as [all_users[], FieldPacket[]] || [void[]];
             console.log(rows)
             
@@ -70,38 +70,78 @@ class Usuario extends DB {
         } catch (error) {
             return false;
         }
+    };
+
+    private async findUserById(id: number): Promise<boolean>{
+        try {
+            await this.checkConnection()
+
+            const [rows] = await this.connection.execute(
+                `select
+                    *
+                from usuarios
+                where id = ? 
+                limit 1`,
+                [id]
+            ) as [all_users[], FieldPacket[]]
+
+            return rows.length ? true : false;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
     }
 
-    public async createUser() {
+    private async existOtherUser(id: number, usuario: Usuario): Promise<boolean>{
         try {
-            if(!this.connection) await this.PoolConnect();
+            await this.checkConnection();
 
-            const existUser: boolean = await this.existUser();
+            const [rows] = await this.connection.execute(
+                `select
+                    *
+                from usuarios
+                where id != ? 
+                and correo = ?
+                limit 1`,
+                [id, usuario.getCorreo()]
+            ) as [all_users[], FieldPacket[]]
+
+            return rows.length ? true : false;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+
+    public async createUser(usuario: Usuario) {
+        try {
+            await this.checkConnection();
+
+            const existUser: boolean = await this.existUser(usuario);
 
             if(existUser) {
                 return {
                     estatus: 2,
                     info: {
                         message: "Usuario existente",
-                        usuario: `${this.nombre} ${this.apellido}`
+                        usuario: `${usuario.nombre} ${usuario.apellido}`
                     }
                 };
             }
-            this.encodePass();
 
             await this.connection.execute(
                 `insert into usuarios
                 (nombre, apellido, correo, contrasena, fecha_creacion)
                 values
                 (?, ?, ?, ?, now())`,
-                [this.nombre, this.apellido, this.getCorreo(), this.getPass()]
+                [usuario.nombre, usuario.apellido, usuario.getCorreo(), usuario.encodePass()]
             );
 
             return {
                 estatus: 1,
                 info: {
                     message: "Se ha creado el usuario de manera correcta",
-                    usuario: `${this.nombre} ${this.apellido}`
+                    usuario: `${usuario.nombre} ${usuario.apellido}`
                 }
             };
         } catch (error) {
@@ -115,11 +155,27 @@ class Usuario extends DB {
         }
     }
 
-    public async updateUser(id: number) {
+    public async updateUser(id: number, usuario: Usuario) {
         try {
-            if(!this.connection) await this.PoolConnect();
+            await this.checkConnection();
+            const existUser: boolean = await this.existOtherUser(id, usuario);
 
-            const existUser: boolean = await this.existUser();
+            if(existUser){
+                return {
+                    estatus: 2,
+                    info: {
+                        message: "Ya existe un usuario con ese correo"
+                    }
+                };
+            }
+            await this.connection.execute(
+                `update usuarios
+                set correo = ?,
+                nombre = ?,
+                apellido = ?
+                where id = ?`,
+                [usuario.getCorreo(), usuario.nombre, usuario.apellido, id]
+            )
 
             return {
                 estatus: 1,
@@ -138,11 +194,67 @@ class Usuario extends DB {
         }
     }
 
-    public async deleteUer(id: number) {
+    public async updatePassword(id:number, lastPassword: string, usuario: Usuario){
         try {
-            if(!this.connection) await this.PoolConnect();
+            await this.checkConnection()
 
-            const existUser: boolean = await this.existUser();
+            const [rows] = await this.connection.execute(
+                `select
+                    *
+                from usuarios
+                where id = ?`,
+                [id]
+            ) as [all_users[], FieldPacket[]];
+
+            if(!rows.length){
+                return {
+                    estatus: 2,
+                    info: {
+                        message: "No existe el usuario en base de datos"
+                    }
+                };
+            }
+
+            const passDB: string = usuario.decodePass(rows[0].contrasena);
+
+            if(lastPassword !== passDB) {
+                return {
+                    estatus: 3,
+                    info: {
+                        message: "No coincide la contraseña actual del usuario"
+                    }
+                };
+            }
+
+            await this.connection.execute(
+                `update usuarios
+                    set contrasena = ?
+                where id = ?`,
+                [usuario.encodePass(), id]
+            )
+
+            return {
+                estatus: 1, 
+                info: {
+                    message: "Se ha cambiado la contraseña del usuario"
+                }
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                estatus: 0,
+                info: {
+                    message: "Ha ocurrido un error: "+error
+                }
+            };
+        }
+    }
+
+    public async deleteUser(id: number) {
+        try {
+            await this.checkConnection()
+
+            const existUser: boolean = await this.findUserById(id);
 
             if(!existUser) {
                 return {
@@ -175,7 +287,10 @@ class Usuario extends DB {
                 }
             };
         }
-    };
+    }
 }
 
-export default Usuario;
+export {
+    Usuario,
+    UsuarioRepository
+};

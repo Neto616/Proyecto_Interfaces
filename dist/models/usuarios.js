@@ -12,15 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UsuarioRepository = exports.Usuario = void 0;
 //Modulos de terceros
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const cryptr_1 = __importDefault(require("cryptr"));
 //Modulos creados
 const db_1 = __importDefault(require("./db"));
-class Usuario extends db_1.default {
+class Usuario {
     constructor(correo, contrasena, nombre, apellido) {
-        super();
         this.correo = correo;
         this.contrasena = contrasena;
         this.nombre = nombre;
@@ -47,6 +47,7 @@ class Usuario extends db_1.default {
             return "";
         }
     }
+    ;
     decodePass(contrasena) {
         try {
             const cryptr = new cryptr_1.default((process.env.SECRET || ""), { saltLength: 10 });
@@ -57,17 +58,20 @@ class Usuario extends db_1.default {
             return "";
         }
     }
-    existUser() {
+    ;
+}
+exports.Usuario = Usuario;
+class UsuarioRepository extends db_1.default {
+    existUser(usuario) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!this.connection)
-                    yield this.PoolConnect();
+                yield this.checkConnection();
                 const [rows] = (yield this.connection.execute(`
                 select 
                     * 
                 from usuarios 
                 where correo = ?
-                limit 1`, [this.correo])) || [void []];
+                limit 1`, [usuario.correo])) || [void []];
                 console.log(rows);
                 return rows.length ? true : false;
             }
@@ -76,31 +80,65 @@ class Usuario extends db_1.default {
             }
         });
     }
-    createUser() {
+    ;
+    findUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!this.connection)
-                    yield this.PoolConnect();
-                const existUser = yield this.existUser();
+                yield this.checkConnection();
+                const [rows] = yield this.connection.execute(`select
+                    *
+                from usuarios
+                where id = ? 
+                limit 1`, [id]);
+                return rows.length ? true : false;
+            }
+            catch (error) {
+                console.log(error);
+                return false;
+            }
+        });
+    }
+    existOtherUser(id, usuario) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield this.checkConnection();
+                const [rows] = yield this.connection.execute(`select
+                    *
+                from usuarios
+                where id != ? 
+                and correo = ?
+                limit 1`, [id, usuario.getCorreo()]);
+                return rows.length ? true : false;
+            }
+            catch (error) {
+                console.log(error);
+                return false;
+            }
+        });
+    }
+    createUser(usuario) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield this.checkConnection();
+                const existUser = yield this.existUser(usuario);
                 if (existUser) {
                     return {
                         estatus: 2,
                         info: {
                             message: "Usuario existente",
-                            usuario: `${this.nombre} ${this.apellido}`
+                            usuario: `${usuario.nombre} ${usuario.apellido}`
                         }
                     };
                 }
-                this.encodePass();
                 yield this.connection.execute(`insert into usuarios
                 (nombre, apellido, correo, contrasena, fecha_creacion)
                 values
-                (?, ?, ?, ?, now())`, [this.nombre, this.apellido, this.getCorreo(), this.getPass()]);
+                (?, ?, ?, ?, now())`, [usuario.nombre, usuario.apellido, usuario.getCorreo(), usuario.encodePass()]);
                 return {
                     estatus: 1,
                     info: {
                         message: "Se ha creado el usuario de manera correcta",
-                        usuario: `${this.nombre} ${this.apellido}`
+                        usuario: `${usuario.nombre} ${usuario.apellido}`
                     }
                 };
             }
@@ -115,12 +153,24 @@ class Usuario extends db_1.default {
             }
         });
     }
-    updateUser(id) {
+    updateUser(id, usuario) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!this.connection)
-                    yield this.PoolConnect();
-                const existUser = yield this.existUser();
+                yield this.checkConnection();
+                const existUser = yield this.existOtherUser(id, usuario);
+                if (existUser) {
+                    return {
+                        estatus: 2,
+                        info: {
+                            message: "Ya existe un usuario con ese correo"
+                        }
+                    };
+                }
+                yield this.connection.execute(`update usuarios
+                set correo = ?,
+                nombre = ?,
+                apellido = ?
+                where id = ?`, [usuario.getCorreo(), usuario.nombre, usuario.apellido, id]);
                 return {
                     estatus: 1,
                     info: {
@@ -139,12 +189,57 @@ class Usuario extends db_1.default {
             }
         });
     }
-    deleteUer(id) {
+    updatePassword(id, lastPassword, usuario) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!this.connection)
-                    yield this.PoolConnect();
-                const existUser = yield this.existUser();
+                yield this.checkConnection();
+                const [rows] = yield this.connection.execute(`select
+                    *
+                from usuarios
+                where id = ?`, [id]);
+                if (!rows.length) {
+                    return {
+                        estatus: 2,
+                        info: {
+                            message: "No existe el usuario en base de datos"
+                        }
+                    };
+                }
+                const passDB = usuario.decodePass(rows[0].contrasena);
+                if (lastPassword !== passDB) {
+                    return {
+                        estatus: 3,
+                        info: {
+                            message: "No coincide la contraseña actual del usuario"
+                        }
+                    };
+                }
+                yield this.connection.execute(`update usuarios
+                    set contrasena = ?
+                where id = ?`, [usuario.encodePass(), id]);
+                return {
+                    estatus: 1,
+                    info: {
+                        message: "Se ha cambiado la contraseña del usuario"
+                    }
+                };
+            }
+            catch (error) {
+                console.log(error);
+                return {
+                    estatus: 0,
+                    info: {
+                        message: "Ha ocurrido un error: " + error
+                    }
+                };
+            }
+        });
+    }
+    deleteUser(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield this.checkConnection();
+                const existUser = yield this.findUserById(id);
                 if (!existUser) {
                     return {
                         estatus: 2,
@@ -173,6 +268,5 @@ class Usuario extends db_1.default {
             }
         });
     }
-    ;
 }
-exports.default = Usuario;
+exports.UsuarioRepository = UsuarioRepository;
