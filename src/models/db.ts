@@ -34,6 +34,16 @@ abstract class DB {
             return
         }        
     }
+
+    public async checkConnection() {
+        try {
+            if(!this.connection) await this.PoolConnect();
+            return
+        } catch (error) {
+            console.log(error);
+            return;
+        }
+    }
 }
 
 export default DB;

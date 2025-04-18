@@ -46,5 +46,18 @@ class DB {
             }
         });
     }
+    checkConnection() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!this.connection)
+                    yield this.PoolConnect();
+                return;
+            }
+            catch (error) {
+                console.log(error);
+                return;
+            }
+        });
+    }
 }
 exports.default = DB;
