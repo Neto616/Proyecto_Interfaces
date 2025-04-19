@@ -12,17 +12,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const rt_views_1 = __importDefault(require("./routes/rt_views"));
-const categorias_1 = require("./models/categorias");
-const app = (0, express_1.default)();
-const port = process.env.PORT || 3000;
-app.use("/", rt_views_1.default);
-(() => __awaiter(void 0, void 0, void 0, function* () {
-    const categoria = new categorias_1.CategoriaRepository();
-    // const result = await categoria.getAll(4)
-    // console.log(result.info["data"])
-}))();
-app.listen(port, () => {
-    console.log(`Servidor corriendo en: http://localhost:${port}`);
-});
+exports.GastoRepository = exports.Gasto = void 0;
+const db_1 = __importDefault(require("./db"));
+class Gasto {
+    constructor(cantidad) {
+        this.cantidad = cantidad;
+    }
+    getGasto() {
+        return this.cantidad;
+    }
+    setGasto(cantidad) {
+        this.cantidad = cantidad;
+    }
+}
+exports.Gasto = Gasto;
+class GastoRepository extends db_1.default {
+    getInfo() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
+    save() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
+    update() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
+    delete() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
+}
+exports.GastoRepository = GastoRepository;
