@@ -12,9 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CategoriasRepository = exports.Categorias = void 0;
+exports.CategoriaRepository = exports.Categoria = void 0;
 const db_1 = __importDefault(require("./db"));
-class Categorias {
+class Categoria {
     constructor(nombre, icono = "") {
         this.nombre = nombre;
         this.icono = icono;
@@ -32,8 +32,8 @@ class Categorias {
         this.icono = path;
     }
 }
-exports.Categorias = Categorias;
-class CategoriasRepository extends db_1.default {
+exports.Categoria = Categoria;
+class CategoriaRepository extends db_1.default {
     exist(categoria_1, userId_1) {
         return __awaiter(this, arguments, void 0, function* (categoria, userId, active = true) {
             try {
@@ -49,6 +49,36 @@ class CategoriasRepository extends db_1.default {
             catch (error) {
                 console.log(error);
                 return false;
+            }
+        });
+    }
+    getAll(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield this.checkConnection();
+                const [categorias] = yield this.connection.execute(`select * from categorias`);
+                const [categorias_personalizadas] = yield this.connection.execute(`select 
+                    * 
+                from categoria_personalizada
+                where usuario = ?
+                and estatus = 1;`, [userId]);
+                return {
+                    estatus: 1,
+                    info: {
+                        message: "Listado de categorias y de categorias creadas por el usuario",
+                        data: [...categorias, ...categorias_personalizadas]
+                    }
+                };
+            }
+            catch (error) {
+                console.log(error);
+                return {
+                    estatus: 0,
+                    info: {
+                        message: "Ha ocurrido un error: " + error,
+                        data: []
+                    }
+                };
             }
         });
     }
@@ -131,4 +161,4 @@ class CategoriasRepository extends db_1.default {
         });
     }
 }
-exports.CategoriasRepository = CategoriasRepository;
+exports.CategoriaRepository = CategoriaRepository;

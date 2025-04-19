@@ -2,7 +2,7 @@ import { FieldPacket } from "mysql2";
 import { all_categories } from "../types/tipos_categorias";
 import DB from "./db";
 
-class Categorias {
+class Categoria {
     constructor(public nombre: string, public icono: string = ""){ 
     }
 
@@ -23,8 +23,8 @@ class Categorias {
     }
 }
 
-class CategoriasRepository extends DB {
-    private async exist(categoria: Categorias, userId: number, active=true): Promise<boolean> {
+class CategoriaRepository extends DB {
+    private async exist(categoria: Categoria, userId: number, active=true): Promise<boolean> {
         try {
             await this.checkConnection();
             const [rows] = await this.connection.execute(
@@ -44,7 +44,40 @@ class CategoriasRepository extends DB {
         }
     }
 
-    public async crear(categoria: Categorias, userId: number) {
+    public async getAll(userId: number){
+        try {
+            await this.checkConnection();
+
+            const [categorias] = await this.connection.execute(
+                `select * from categorias`) as [all_categories[], FieldPacket[]];
+            const [categorias_personalizadas] = await this.connection.execute(
+                `select 
+                    * 
+                from categoria_personalizada
+                where usuario = ?
+                and estatus = 1;`,
+                [userId]) as [all_categories[], FieldPacket[]];
+
+            return {
+                estatus: 1,
+                info: {
+                    message: "Listado de categorias y de categorias creadas por el usuario",
+                    data: [...categorias, ...categorias_personalizadas]
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            return {
+                estatus: 0,
+                info: {
+                    message: "Ha ocurrido un error: "+error,
+                    data: []
+                }
+            };
+        }
+    }
+
+    public async crear(categoria: Categoria, userId: number) {
         try {
             await this.checkConnection();
             const existActive: boolean = await this.exist(categoria, userId);
@@ -92,8 +125,7 @@ class CategoriasRepository extends DB {
             };
         }
     }
-
-    public async eliminar(categoria: Categorias, userId: number) {
+    public async eliminar(categoria: Categoria, userId: number) {
         try {
             await this.checkConnection();
             const exist: boolean = await this.exist(categoria, userId);
@@ -132,7 +164,7 @@ class CategoriasRepository extends DB {
     }
 }
 
-export { 
-    Categorias,
-    CategoriasRepository
+export {
+    Categoria,
+    CategoriaRepository
 }
