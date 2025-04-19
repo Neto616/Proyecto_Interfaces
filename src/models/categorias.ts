@@ -62,7 +62,10 @@ class CategoriaRepository extends DB {
                 estatus: 1,
                 info: {
                     message: "Listado de categorias y de categorias creadas por el usuario",
-                    data: [...categorias, ...categorias_personalizadas]
+                    data: {
+                        categorias: (categorias || []),
+                        categorias_personalizadas: (categorias_personalizadas || [])
+                    }
                 }
             }
         } catch (error) {
@@ -71,7 +74,10 @@ class CategoriaRepository extends DB {
                 estatus: 0,
                 info: {
                     message: "Ha ocurrido un error: "+error,
-                    data: []
+                    data: {
+                        categorias: [],
+                        categorias_personalizadas: []
+                    }
                 }
             };
         }

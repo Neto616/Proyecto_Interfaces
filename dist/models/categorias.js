@@ -66,7 +66,10 @@ class CategoriaRepository extends db_1.default {
                     estatus: 1,
                     info: {
                         message: "Listado de categorias y de categorias creadas por el usuario",
-                        data: [...categorias, ...categorias_personalizadas]
+                        data: {
+                            categorias: (categorias || []),
+                            categorias_personalizadas: (categorias_personalizadas || [])
+                        }
                     }
                 };
             }
@@ -76,7 +79,10 @@ class CategoriaRepository extends db_1.default {
                     estatus: 0,
                     info: {
                         message: "Ha ocurrido un error: " + error,
-                        data: []
+                        data: {
+                            categorias: [],
+                            categorias_personalizadas: []
+                        }
                     }
                 };
             }
