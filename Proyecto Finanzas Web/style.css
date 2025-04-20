@@ -7,7 +7,6 @@ h1 {
 .card {
     background-color: #b52d5f;
     border-radius: 15px;
-    padding: 20px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     text-align: left;
     margin-bottom: 10px;
@@ -70,4 +69,3 @@ h1 {
     height: 100%;
     object-fit: cover;
   }
-  
