@@ -1,7 +1,7 @@
+
 import dotenv from 'dotenv';
 dotenv.config();
 import mysql, { PoolOptions } from "mysql2/promise";
-import { Connection } from 'mysql2/typings/mysql/lib/Connection';
 
 abstract class DB {
     private configuration: PoolOptions;
@@ -26,7 +26,7 @@ abstract class DB {
     /**
      * PoolConnect
      */
-    public async PoolConnect() {
+    protected async PoolConnect() {
         try {
             this.connection = await mysql.createConnection(this.configuration);
         } catch (error) {
@@ -35,7 +35,7 @@ abstract class DB {
         }        
     }
 
-    public async checkConnection() {
+    protected async checkConnection() {
         try {
             if(!this.connection) await this.PoolConnect();
             return

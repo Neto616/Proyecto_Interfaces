@@ -1,11 +1,11 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const route = express_1.default.Router();
+const express_1 = require("express");
+const route = (0, express_1.Router)();
+route.get("/iniciar-sesion", (req, res) => {
+    res.send('Iniciar sesion');
+});
 route.get("/", (req, res) => {
-    res.send('Hello, TypeScript Express!');
+    res.send('DashBoards');
 });
 exports.default = route;
