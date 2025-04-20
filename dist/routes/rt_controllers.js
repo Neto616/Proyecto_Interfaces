@@ -1,0 +1,11 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const ctrl_usuarios_1 = __importDefault(require("../controllers/ctrl_usuarios"));
+const route = (0, express_1.Router)();
+route.post("/crear-usuario", ctrl_usuarios_1.default.crear);
+route.put("/actualizar-usuario", ctrl_usuarios_1.default.actualizar);
+exports.default = route;
