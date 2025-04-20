@@ -10,6 +10,7 @@ h1 {
     padding: 20px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     text-align: left;
+    margin-bottom: 10px;
 }
 
 .card h2 {
@@ -41,7 +42,7 @@ h1 {
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     transition: background-color 0.3s ease;
-    width: 240px;
+    margin-bottom: 10px;
   }
   
   .btn-pilar:hover {
