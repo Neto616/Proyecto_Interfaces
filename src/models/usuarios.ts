@@ -113,6 +113,49 @@ class UsuarioRepository extends DB {
         }
     }
 
+    public async getInfo(id: number){
+        try {
+            await this.checkConnection();
+            const userInfo: boolean = await this.findUserById(id);
+            
+            if(!userInfo) {
+                return {
+                    estatus: 2,
+                    info: {
+                        message: "El usuario no existe",
+                        data: []
+                    }
+                };
+            }
+
+            const [rows] = await this.connection.query(
+                `select
+                    *
+                from usuarios
+                where id = ?
+                limit 1
+                `, 
+                [id]) as [all_users[], FieldPacket[]];
+            
+            return {
+                estatus: 1,
+                info: {
+                    message: "Datos del usuario",
+                    data: rows[0] || {}
+                }
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                estatus: 0,
+                info: {
+                    message: "Ha ocurrido un error: "+error,
+                    data: []
+                }
+            }
+        }
+    }
+
     public async createUser(usuario: Usuario) {
         try {
             await this.checkConnection();

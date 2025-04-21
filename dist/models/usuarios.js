@@ -116,6 +116,46 @@ class UsuarioRepository extends db_1.default {
             }
         });
     }
+    getInfo(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield this.checkConnection();
+                const userInfo = yield this.findUserById(id);
+                if (!userInfo) {
+                    return {
+                        estatus: 2,
+                        info: {
+                            message: "El usuario no existe",
+                            data: []
+                        }
+                    };
+                }
+                const [rows] = yield this.connection.query(`select
+                    *
+                from usuarios
+                where id = ?
+                limit 1
+                `, [id]);
+                return {
+                    estatus: 1,
+                    info: {
+                        message: "Datos del usuario",
+                        data: rows[0] || {}
+                    }
+                };
+            }
+            catch (error) {
+                console.log(error);
+                return {
+                    estatus: 0,
+                    info: {
+                        message: "Ha ocurrido un error: " + error,
+                        data: []
+                    }
+                };
+            }
+        });
+    }
     createUser(usuario) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
