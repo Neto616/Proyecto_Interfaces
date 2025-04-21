@@ -46,7 +46,7 @@ class GastoRepository extends db_1.default {
                 const offset = (pagina - 1) * limit;
                 const [rows] = yield this.connection.execute(`select 
                     g.id as id,
-                    g.cantidad as cantidad,
+                    format(g.cantidad, 2) as cantidad,
                     concat(u.nombre, " ", apellido) as usuario,
                     c.titulo as categoria_titulo,
                     c.icono as categoria_icono,
@@ -54,7 +54,7 @@ class GastoRepository extends db_1.default {
                     cp.icono as categoria_personalizada_icono,
                     g.fecha_alta
                 from gastos g
-                inner join gastos_categorias_r gcr on gcr.id_gasto = g.id
+                left join gastos_categorias_r gcr on gcr.id_gasto = g.id
                 inner join usuarios u on u.id = g.usuario
                 left join categorias c on c.id = gcr.id_categoria
                 left join categoria_personalizada cp on cp.id = gcr.id_categoria_per and cp.usuario = ?
