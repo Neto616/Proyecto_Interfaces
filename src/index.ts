@@ -3,15 +3,16 @@ dotenv.config();
 import express from "express";
 import multer from 'multer';
 import session from "express-session";
+import cors from "cors";
 import { default as vista } from './routes/rt_views';
 import { default as controller } from './routes/rt_controllers';
-
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 const upload = multer();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors())
 app.use(session({
     secret: (process.env.SECRET || ""),
     cookie: {
