@@ -24,6 +24,8 @@ const ctrl_gastos = {
             console.log(error);
             return res.status(500).json({ estatus: 0, info: { message: "Ha ocurrido un error: " + error } });
         }
+    }),
+    actualizar: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     })
 };
 exports.default = ctrl_gastos;

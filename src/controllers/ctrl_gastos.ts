@@ -15,6 +15,9 @@ const ctrl_gastos = {
             console.log(error);
             return res.status(500).json({ estatus: 0, info: {message: "Ha ocurrido un error: "+error}});
         }
+    },
+    actualizar: async (req:Request, res: Response) => {
+        
     }
 };
 
