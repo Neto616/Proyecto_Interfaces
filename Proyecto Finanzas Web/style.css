@@ -74,10 +74,11 @@ h1 {
     width: 91%;
     padding: 12px 15px;
     margin: 10px 0;
+    margin-top: 2%;
     border: 2px solid #e3b9c9;
     border-radius: 10px;
     background-color: #fdf7f9;
-    font-size: 16px;
+    font-size: 15px;
     font-family: 'Poppins', sans-serif;
     color: #333;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
