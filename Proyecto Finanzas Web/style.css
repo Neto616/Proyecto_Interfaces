@@ -69,3 +69,22 @@ h1 {
     height: 100%;
     object-fit: cover;
   }
+
+  .input-moderno {
+    width: 91%;
+    padding: 12px 15px;
+    margin: 10px 0;
+    border: 2px solid #e3b9c9;
+    border-radius: 10px;
+    background-color: #fdf7f9;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: border-color 0.3s ease;
+}
+
+.input-moderno:focus {
+    outline: none;
+    border-color: #b52d5f;
+}
