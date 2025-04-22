@@ -9,8 +9,8 @@ function GastosRecientes({number, titulo, cantidad}){
                 paddingLeft: "20px", 
                 backgroundColor: "#e1d0d6"}}
                 id={number}>
-                    <h3>{number}.- {titulo}</h3>
-                    <p style={{color:"black"}}>${cantidad}</p>
+                    <h3>{number}.- {titulo}</h3> 
+                    <p style={{color:"black", al: "left"}}>${cantidad}</p>
             </div>
         </>
     )
