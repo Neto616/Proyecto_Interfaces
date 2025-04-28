@@ -10,13 +10,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const gastos_1 = require("../models/gastos");
+const db_1 = require("../models/db");
 const ctrl_gastos = {
     crear: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
+            const connection = yield db_1.db.connect();
             const userId = res.locals.id;
             const { cantidad, categoria, categoria_p } = req.body;
             const gasto = new gastos_1.Gasto(cantidad, categoria, categoria_p, userId);
-            const service = new gastos_1.GastoRepository();
+            const service = new gastos_1.GastoRepository(connection);
             const result = service.create(gasto);
             return res.status(200).json(result);
         }

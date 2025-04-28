@@ -1,14 +1,22 @@
 import { Router, Request, Response } from "express";
 import { UsuarioRepository } from "../models/usuarios";
 import { Gasto, GastoRepository } from "../models/gastos";
+import path from "path";
+import { hasAccount } from "../middlewares/authMdw";
+import { db } from "../models/db";
+import Cryptr from "cryptr";
 
+const cryptr: Cryptr = new Cryptr((process.env.SECRET || ""), {saltLength: 10});
 const route: Router = Router();
 
-route.get("/user-info/:id", async (req: Request, res: Response) => {
+route.get("/session", (req: Request, res: Response)=> res.send(req.session))
+
+route.get("/user-info", [hasAccount],async (req: Request, res: Response) => {
     try {
-        const {id} = req.params; //Por el momento es query pero cambiara una vez tengamos sessions y cookies
-        const service: UsuarioRepository = new UsuarioRepository();
-        const result = await service.getInfo(parseInt(id || "0"));
+        const connection = await db.connect();
+        const service: UsuarioRepository = new UsuarioRepository(connection);
+        const {userNumber } = req.session.usuario;
+        const result = await service.getInfo(parseInt(cryptr.decrypt(userNumber) || "0"));
         console.log(result);
         return res.json(result);
     } catch (error) {
@@ -22,13 +30,14 @@ route.get("/user-info/:id", async (req: Request, res: Response) => {
     }
 })
 
-route.get("/get-gastos/:id", async (req: Request, res: Response) => {
+route.get("/get-gastos", [hasAccount], async (req: Request, res: Response) => {
     try {
-        const {id} = req.params; //Por el momento es query pero cambiara una vez tengamos sessions y cookies
-        const gasto: Gasto = new Gasto(0, null, null, parseInt(id || "0"));
-        const service: GastoRepository = new GastoRepository();
+        const connection = await db.connect()
+        const {userNumber } = req.session.usuario;
+        const gasto: Gasto = new Gasto(0, null, null, parseInt(cryptr.decrypt(userNumber) || "0"));
+        const service: GastoRepository = new GastoRepository(connection);
         const result = await service.getAll(gasto);
-        console.log(result);
+        // console.log(result);
 
         return res.json(result);
     } catch (error) {
@@ -41,11 +50,16 @@ route.get("/get-gastos/:id", async (req: Request, res: Response) => {
 })
 
 route.get("/iniciar-sesion", (req: Request, res: Response) => {
-    res.send('Iniciar sesion');
+    res.sendFile(path.join(__dirname, "../client/index.html"))
 });
 
-route.get("/", (req: Request, res: Response) => {
-    res.send('DashBoards');
+route.get("/", [hasAccount], (req: Request, res: Response) => {
+    console.log("La sesion es: ",req.session)
+    if(req.session.usuario){
+        console.log("Hola   ")
+        return res.sendFile(path.join(__dirname, "../client/index.html"), (err)=> console.log("Ha ocurrido un error", err));
+    }
+    return res.redirect("/iniciar-sesion")
 });
 
 export default route;

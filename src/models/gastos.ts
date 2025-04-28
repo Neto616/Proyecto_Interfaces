@@ -1,7 +1,6 @@
 import { FieldPacket } from "mysql2";
 import { all_gastos } from "../types/tipos_gastos";
-import DB from "./db";
-
+import { Connection } from "mysql2/promise";
 class Gasto{
     constructor(public cantidad: number, public valueCategory: (number | null),
         public valueCategoryP: (number | null), private userId: number
@@ -28,10 +27,11 @@ class Gasto{
     }
 }
 
-class GastoRepository extends DB{
+class GastoRepository {
+    constructor (private connection: Connection){}
+
     public async getAll(gasto: Gasto, pagina: number = 1, limit: number = 10) {
         try {
-            await this.checkConnection();
             const offset = (pagina - 1) * limit;
 
             const [rows] = await this.connection.execute(
@@ -78,7 +78,6 @@ class GastoRepository extends DB{
 
     public async create(gasto: Gasto) {
         try {
-            await this.checkConnection();
             console.log(gasto)
 
             await this.connection.execute(
@@ -115,8 +114,6 @@ class GastoRepository extends DB{
 
     public async update(gasto: Gasto, gastoId: number) {
         try {
-            await this.checkConnection();
-
             await this.connection.execute(
                 `update gastos
                 set cantidad = ?
@@ -151,7 +148,6 @@ class GastoRepository extends DB{
 
     public async delete(gastoId: number) {
         try {
-            await this.checkConnection();
             await this.connection.execute(`delete from gastos_categorias_r where id_gasto = ?`, [gastoId]);
             await this.connection.execute(`delete from gastos where id = ?`, [gastoId]);
             return {

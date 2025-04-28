@@ -1,43 +1,54 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  entry: './app/index.jsx',
-  output: {
-    path: path.resolve(__dirname, 'dist/client'),
-    filename: 'bundle.js',
-    clean: true,
-    assetModuleFilename: 'assets/[hash][ext][query]' // Para guardar imágenes
-  },
-  resolve: {
-    extensions: ['.js', '.jsx'],
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: 'babel-loader'
-      },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
-      },
-      {
-        test: /\.(png|jpe?g|gif|svg)$/i,
-        type: 'asset/resource',
-      }
-    ]
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './dist/client/index.html'
-    })
-  ],
-  devServer: {
-    static: path.resolve(__dirname, 'dist/client'),
-    hot: true,
-    port: 3000
-  },
-  mode: 'development'
-};
+    entry: './app/src/index.jsx',
+    output: {
+      path: path.resolve(__dirname, 'dist/client'),
+      filename: 'bundle.js',
+      publicPath: '/static/', 
+    },
+    module: {
+      rules: [
+        {
+          test: /\.jsx?$/,  // Para .js y .jsx
+          exclude: /node_modules/,
+          use: 'babel-loader',
+        },
+        {
+          test: /\.css$/,  // Para .css
+          use: [
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+          ],
+        },
+        {
+          test: /\.(png|jpe?g|gif|svg)$/,  // Para imágenes .png, .jpg, .jpeg, .gif, .svg
+          type: 'asset/resource',  // Usamos 'asset/resource' para que Webpack gestione las imágenes
+          generator: {
+            filename: 'images/[name][hash][ext][query]',  // Puedes personalizar la ruta y el nombre de las imágenes
+          },
+        },
+      ],
+    },
+    resolve: {
+      extensions: ['.js', '.jsx'],
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: './app/public/index.html',
+      }),
+      new MiniCssExtractPlugin({
+        filename: 'styles.css',
+      }),
+    ],
+    devServer: {
+      static: path.resolve(__dirname, '/app/public'),
+      port: 3000,
+      open: true,
+      hot: true,
+    },
+    mode: 'development',
+  };
+  

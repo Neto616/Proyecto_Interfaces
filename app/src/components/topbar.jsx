@@ -11,7 +11,7 @@ function TopBar() {
     useEffect( ()=> {
         async function fetchUserData (){
             if(data.nombre == "..."){
-                const result = await fetch("http://localhost:3001/user-info/4", {method: "GET"})
+                const result = await fetch("http://localhost:3001/user-info", {method: "GET"})
                 const data = await result.json();
                 console.log("FetchUserData", data)
                 if(data.estatus == 1){

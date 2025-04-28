@@ -11,20 +11,24 @@ const express_session_1 = __importDefault(require("express-session"));
 const cors_1 = __importDefault(require("cors"));
 const rt_views_1 = __importDefault(require("./routes/rt_views"));
 const rt_controllers_1 = __importDefault(require("./routes/rt_controllers"));
+const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3001;
 const upload = (0, multer_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
-app.use((0, cors_1.default)());
 app.use((0, express_session_1.default)({
     secret: (process.env.SECRET || ""),
     cookie: {
         maxAge: 1000 * 60 * 60,
         path: "/",
         secure: false
-    }
+    },
+    resave: false,
+    saveUninitialized: true // Cambia a true para probar
 }));
+app.use("/static", express_1.default.static(path_1.default.join(__dirname, "/client"))); // ejemplo si usas React
+app.use((0, cors_1.default)());
 app.use(upload.any());
 app.use("/", rt_views_1.default);
 app.use("/", rt_controllers_1.default);

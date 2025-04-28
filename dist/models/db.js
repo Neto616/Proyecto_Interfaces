@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.db = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const promise_1 = __importDefault(require("mysql2/promise"));
@@ -30,34 +31,18 @@ class DB {
             enableKeepAlive: true,
             keepAliveInitialDelay: 0,
         };
-        this.PoolConnect().then(() => console.log("Se ha conectado a la base de datos")).catch(error => console.log(error));
     }
     /**
      * PoolConnect
      */
-    PoolConnect() {
+    connect() {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
+            if (!this.connection) {
                 this.connection = yield promise_1.default.createConnection(this.configuration);
+                console.log("Se ha conectado a base de datos");
             }
-            catch (error) {
-                console.log(error);
-                return;
-            }
-        });
-    }
-    checkConnection() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                if (!this.connection)
-                    yield this.PoolConnect();
-                return;
-            }
-            catch (error) {
-                console.log(error);
-                return;
-            }
+            return this.connection;
         });
     }
 }
-exports.default = DB;
+exports.db = new DB();

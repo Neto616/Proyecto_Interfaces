@@ -3,6 +3,10 @@ import "../styles/style.css";
 import logo from "../img/2640804.png"
 
 function SideBar() {
+    function openChatito() {
+        window.open("https://t.me/chachit0_bot", '_blank')
+    }
+
     return (
         <div className="card" style={{
             width: "215px", position: "fixed", left: "-15px", 
@@ -14,7 +18,7 @@ function SideBar() {
                 }}>Dashboard</button>
             <button className="btn-pilar" style={{
                 paddingLeft: "40px", width: "100%"
-                }}>Habla con Chatito</button>
+                }} onClick={()=> openChatito()}>Habla con Chachito</button>
             <button className="btn-pilar"style={{
                 paddingLeft: "40px", width: "100%"
                 }}>Cerrar Sesión</button>

@@ -2,10 +2,11 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import Cryptr from "cryptr";
+const cryptr: Cryptr = new Cryptr((process.env.SECRET || ""), {saltLength: 10});
 //Modulos creados
-import DB from "./db";
 import { all_users } from '../types/tipos_usuarios';
 import { FieldPacket } from 'mysql2';
+import { Connection } from 'mysql2/promise';
 
 class Usuario{
     constructor(
@@ -29,7 +30,6 @@ class Usuario{
 
     public encodePass(): string {
         try {
-            const cryptr: Cryptr = new Cryptr((process.env.SECRET || ""), {saltLength: 10});
             const contrasena: string = this.contrasena;
             this.setPass(cryptr.encrypt(contrasena));
 
@@ -42,7 +42,6 @@ class Usuario{
 
     public decodePass(contrasena: string): string {
         try {
-            const cryptr: Cryptr = new Cryptr((process.env.SECRET || ""), {saltLength: 10});
             return cryptr.decrypt(contrasena);
         } catch (error) {
             console.log(error);
@@ -51,31 +50,11 @@ class Usuario{
     };
 }
 
-class UsuarioRepository extends DB {
-    private async existUser(usuario: Usuario): Promise<boolean> {
-        try {
-            await this.checkConnection()
-
-            const [rows] = await this.connection.execute(`
-                select 
-                    * 
-                from usuarios 
-                where correo = ?
-                limit 1`,
-                [usuario.correo]
-            ) as [all_users[], FieldPacket[]] || [void[]];
-            console.log(rows)
-            
-            return rows.length ? true : false;
-        } catch (error) {
-            return false;
-        }
-    };
-
+class UsuarioRepository{
+    constructor (private connection: Connection){}
+    
     private async findUserById(id: number): Promise<boolean>{
         try {
-            await this.checkConnection()
-
             const [rows] = await this.connection.execute(
                 `select
                     *
@@ -94,8 +73,6 @@ class UsuarioRepository extends DB {
 
     private async existOtherUser(id: number, usuario: Usuario): Promise<boolean>{
         try {
-            await this.checkConnection();
-
             const [rows] = await this.connection.execute(
                 `select
                     *
@@ -113,9 +90,70 @@ class UsuarioRepository extends DB {
         }
     }
 
+    private async existUser(usuario: Usuario): Promise<boolean> {
+        try {
+            const [rows] = await this.connection.execute(`
+                select 
+                    * 
+                from usuarios 
+                where correo = ?
+                limit 1`,
+                [usuario.correo]
+            ) as [all_users[], FieldPacket[]] || [void[]];
+            console.log(rows)
+            
+            return rows.length ? true : false;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    public async getUserData(usuario: Usuario) {
+        try {
+            const existUser: boolean = await this.existUser(usuario);
+            
+            if(!existUser) {
+                return {
+                    estatus: 2,
+                    info: {
+                        message: "El usuario no existe",
+                        data: [{id: 0, nombre: "", apellido: "",
+                            correo: "", contrasena: "",
+                            fecha_creacion: " "}]
+                    }
+                }
+            }
+
+            const [ rows ] = await this.connection.execute(
+                `select
+                *
+                from usuarios
+                where correo = ?
+                limit 1`,
+                [usuario.getCorreo()]
+            ) as [all_users[], FieldPacket[]]
+
+            return {
+                estatus: 1,
+                info: {
+                    message: "Datos del usuario",
+                    data: rows
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            return {
+                estatus: 0,
+                info: {
+                    message: "Ha ocurrido un error: "+error,
+                    data: []
+                }
+            };
+        }
+    }
+
     public async getInfo(id: number){
         try {
-            await this.checkConnection();
             const userInfo: boolean = await this.findUserById(id);
             
             if(!userInfo) {
@@ -158,8 +196,6 @@ class UsuarioRepository extends DB {
 
     public async createUser(usuario: Usuario) {
         try {
-            await this.checkConnection();
-
             const existUser: boolean = await this.existUser(usuario);
 
             if(existUser) {
@@ -200,7 +236,6 @@ class UsuarioRepository extends DB {
 
     public async updateUser(id: number, usuario: Usuario) {
         try {
-            await this.checkConnection();
             const existUser: boolean = await this.existOtherUser(id, usuario);
 
             if(existUser){
@@ -239,8 +274,6 @@ class UsuarioRepository extends DB {
 
     public async updatePassword(id:number, lastPassword: string, usuario: Usuario){
         try {
-            await this.checkConnection()
-
             const [rows] = await this.connection.execute(
                 `select
                     *
@@ -295,8 +328,6 @@ class UsuarioRepository extends DB {
 
     public async deleteUser(id: number) {
         try {
-            await this.checkConnection()
-
             const existUser: boolean = await this.findUserById(id);
 
             if(!existUser) {

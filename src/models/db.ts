@@ -1,11 +1,11 @@
 
 import dotenv from 'dotenv';
 dotenv.config();
-import mysql, { PoolOptions } from "mysql2/promise";
+import mysql, { PoolOptions, Connection } from "mysql2/promise";
 
-abstract class DB {
+class DB {
     private configuration: PoolOptions;
-    protected connection!:mysql.Connection;
+    private connection!:Connection|null;
     constructor() {
         this.configuration = {
             host: process.env.HOST,
@@ -20,30 +20,19 @@ abstract class DB {
             enableKeepAlive: true,
             keepAliveInitialDelay: 0,
         }
-        this.PoolConnect().then(()=> console.log("Se ha conectado a la base de datos")).catch(error => console.log(error))
     }
 
     /**
      * PoolConnect
      */
-    protected async PoolConnect() {
-        try {
+    public async connect():Promise<Connection> {
+        if(!this.connection) {
             this.connection = await mysql.createConnection(this.configuration);
-        } catch (error) {
-            console.log(error);
-            return
-        }        
-    }
-
-    protected async checkConnection() {
-        try {
-            if(!this.connection) await this.PoolConnect();
-            return
-        } catch (error) {
-            console.log(error);
-            return;
+            console.log("Se ha conectado a base de datos");
         }
+
+        return this.connection;     
     }
 }
 
-export default DB;
+export const db = new DB();

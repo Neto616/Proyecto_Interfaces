@@ -10,7 +10,7 @@ function DashBorad (){
     useEffect(()=>{
         async function fetchGetGasto () {
             try {
-                const result = await fetch("http://localhost:3001/get-gastos/4", {method: "GET"});
+                const result = await fetch("http://localhost:3001/get-gastos", {method: "GET"});
                 const data = await result.json();
                 console.log(data);
                 setGasto(data.info.data)
@@ -70,13 +70,13 @@ function DashBorad (){
                                 titulo= {e.categoria_titulo ?? e.categoria_personalizada_titulo} 
                                 cantidad= {e.cantidad}/>
                         }
-                    })) : <div className="card" style={{
+                    })) : (<div className="card" style={{
                         padding: "0.5px", 
                         paddingLeft: "20px", 
                         backgroundColor: "#e1d0d6"}}
                         >
-                            <h3>Ingresa tu primer gasto</h3>
-                    </div>}
+                            <h3>👇🏾Ingresa tu primer cargo </h3>
+                    </div>)}
                     
                     <button className="btn-pilar" style={{
                         fontSize: "14px", borderRadius: "20px"

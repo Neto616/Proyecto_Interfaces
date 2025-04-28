@@ -8,12 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GastoRepository = exports.Gasto = void 0;
-const db_1 = __importDefault(require("./db"));
 class Gasto {
     constructor(cantidad, valueCategory, valueCategoryP, userId) {
         this.cantidad = cantidad;
@@ -38,11 +34,13 @@ class Gasto {
     }
 }
 exports.Gasto = Gasto;
-class GastoRepository extends db_1.default {
+class GastoRepository {
+    constructor(connection) {
+        this.connection = connection;
+    }
     getAll(gasto_1) {
         return __awaiter(this, arguments, void 0, function* (gasto, pagina = 1, limit = 10) {
             try {
-                yield this.checkConnection();
                 const offset = (pagina - 1) * limit;
                 const [rows] = yield this.connection.execute(`select 
                     g.id as id,
@@ -86,7 +84,6 @@ class GastoRepository extends db_1.default {
     create(gasto) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 console.log(gasto);
                 yield this.connection.execute(`insert into gastos
                 (cantidad, fecha_alta, usuario)
@@ -117,7 +114,6 @@ class GastoRepository extends db_1.default {
     update(gasto, gastoId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 yield this.connection.execute(`update gastos
                 set cantidad = ?
                 where id = ?`, [gasto.getCantidad(), gastoId]);
@@ -146,7 +142,6 @@ class GastoRepository extends db_1.default {
     delete(gastoId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 yield this.connection.execute(`delete from gastos_categorias_r where id_gasto = ?`, [gastoId]);
                 yield this.connection.execute(`delete from gastos where id = ?`, [gastoId]);
                 return {

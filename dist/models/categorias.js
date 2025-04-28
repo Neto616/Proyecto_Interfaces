@@ -8,12 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoriaRepository = exports.Categoria = void 0;
-const db_1 = __importDefault(require("./db"));
 class Categoria {
     constructor(nombre, icono = "") {
         this.nombre = nombre;
@@ -33,11 +29,13 @@ class Categoria {
     }
 }
 exports.Categoria = Categoria;
-class CategoriaRepository extends db_1.default {
+class CategoriaRepository {
+    constructor(connection) {
+        this.connection = connection;
+    }
     exist(categoria_1, userId_1) {
         return __awaiter(this, arguments, void 0, function* (categoria, userId, active = true) {
             try {
-                yield this.checkConnection();
                 const [rows] = yield this.connection.execute(`select 
                     *
                 from categoria_personalizada
@@ -55,7 +53,6 @@ class CategoriaRepository extends db_1.default {
     getAll(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 const [categorias] = yield this.connection.execute(`select * from categorias`);
                 const [categorias_personalizadas] = yield this.connection.execute(`select 
                     * 
@@ -91,7 +88,6 @@ class CategoriaRepository extends db_1.default {
     crear(categoria, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 const existActive = yield this.exist(categoria, userId);
                 const existDesactive = yield this.exist(categoria, userId, false);
                 if (existActive) {
@@ -134,7 +130,6 @@ class CategoriaRepository extends db_1.default {
     eliminar(categoria, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 const exist = yield this.exist(categoria, userId);
                 if (!exist) {
                     return {

@@ -5,8 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const ctrl_usuarios_1 = __importDefault(require("../controllers/ctrl_usuarios"));
+const ctrl_servicios_1 = __importDefault(require("../controllers/ctrl_servicios"));
 const route = (0, express_1.Router)();
 //usuarios
+route.put("/iniciar-sesion", ctrl_servicios_1.default.login);
 route.post("/crear-usuario", ctrl_usuarios_1.default.crear);
 route.put("/actualizar-usuario", ctrl_usuarios_1.default.actualizar);
 exports.default = route;
