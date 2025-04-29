@@ -1,22 +1,19 @@
 import React, { useState } from "react";
 import { data, Link } from "react-router-dom"
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
 import "../styles/style.css";
 
 
-function Login() {
+function Login({ alert }) {
     const [dataLogin, setDataLogin] = useState({
         correo: "",
         contrasena: ""
     });
 
-    const MySwal = withReactContent(Swal);
     const navigate = useNavigate();
 
     const showSwal = (icon, title, text, showConfirmButton) => {
-        MySwal.fire({
+        alert.fire({
           position: "top-end",
           icon,
           title,
@@ -37,7 +34,7 @@ function Login() {
             e.preventDefault();
             sessionStorage.clear();
             console.log("Data Login: ", dataLogin)
-            const result = await fetch("http://localhost:3001/iniciar-sesion",{
+            const result = await fetch("/iniciar-sesion",{
                 method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(dataLogin)
@@ -51,8 +48,12 @@ function Login() {
                 
                 return ;
             }
-            
-            showSwal("info", "Oops...", estatus == 2 ? "Correo o contraseñas incorrectos" : "Favor de intentarlo otra vez", false);
+
+            let text = "Favor de intentarlo otra vez";
+            if( estatus == -1 ) text = "Favor de escribir un correo correct";
+            if( estatus == 2 ) text = "Correo o contraseñas incorrectos";
+
+            showSwal("info", "Oops...", text, false);
         } catch (error) {
             console.log(error);
         }

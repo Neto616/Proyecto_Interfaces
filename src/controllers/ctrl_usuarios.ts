@@ -7,11 +7,12 @@ const ctrl_usuario = {
         try {
             const connection = await db.connect();
             const { correo, contrasena, nombre, apellido } = req.body;
+            console.log(req.body)
             const usuario: Usuario = new Usuario(correo, contrasena, nombre, apellido);
             const service: UsuarioRepository = new UsuarioRepository(connection);
             const result = await service.createUser(usuario);
             console.log(result);
-
+            
             return res.status(200).json(result);
         } catch (error) {
             console.log(error);

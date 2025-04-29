@@ -16,6 +16,7 @@ const ctrl_usuario = {
         try {
             const connection = yield db_1.db.connect();
             const { correo, contrasena, nombre, apellido } = req.body;
+            console.log(req.body);
             const usuario = new usuarios_1.Usuario(correo, contrasena, nombre, apellido);
             const service = new usuarios_1.UsuarioRepository(connection);
             const result = yield service.createUser(usuario);
