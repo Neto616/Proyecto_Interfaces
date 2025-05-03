@@ -11,6 +11,12 @@ const route: Router = Router();
 
 route.get("/session", (req: Request, res: Response)=> res.send(req.session))
 
+route.get("/cerrar-sesion", (req: Request, res: Response) => {
+        if(req.session?.usuario) req.session.destroy((err) => console.log(err));
+        res.redirect("/");
+
+})
+
 route.get("/user-info", [hasAccount],async (req: Request, res: Response) => {
     try {
         const connection = await db.connect();
@@ -52,6 +58,10 @@ route.get("/get-gastos", [hasAccount], async (req: Request, res: Response) => {
 route.get("/iniciar-sesion", (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, "../client/index.html"))
 });
+
+route.get("/crear-cuenta", (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, "../client/index.html"))
+})
 
 route.get("/", [hasAccount], (req: Request, res: Response) => {
     console.log("La sesion es: ",req.session)

@@ -44,11 +44,17 @@ module.exports = {
       }),
     ],
     devServer: {
-      static: path.resolve(__dirname, '/app/public'),
+      static: path.resolve(__dirname, 'app/public'),
       port: 3000,
       open: true,
       hot: true,
-    },
+      watchFiles: {
+        options: {
+          ignored: ['**/DumpStack.log.tmp', '**/*.tmp', '**/node_modules/**']
+        }
+      }
+    }
+    ,
     mode: 'development',
   };
   

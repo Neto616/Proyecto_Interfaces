@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../styles/style.css"
 import SideBar from "../components/sidebar";
 import TopBar from "../components/topbar";
+import Graph from "../components/graphs";
 import GastosRecientes from "../components/gastos_recientes";
 
 function DashBorad (){
@@ -51,6 +52,7 @@ function DashBorad (){
                         padding: "10px", 
                         backgroundColor: "#e1d0d6"}}>
                         <h3 style={{paddingLeft: "20px"}}>Gráfico:</h3>
+                        <Graph width={"25px"} height={"25px"} />
                     </div>
                 </div>
                 <div style={{
@@ -89,6 +91,7 @@ function DashBorad (){
                         marginTop: "12px", height: "max-content", padding: "10px",
                         backgroundColor: "#e1d0d6"}}>
                         <h3 style={{paddingLeft: "20px"}}>Gráfico:</h3>
+                        <Graph width={"25px"} height={"25 px"} />
                     </div>
                 </div>
             </div>

@@ -1,7 +1,12 @@
-body {
-  background-color: #f4e9ed; font-family: 'Poppins', sans-serif;
-  overflow-y: scroll;
+html, body {
+  background-color: #f4e9ed;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  min-height: 100vh; /* nuevo: asegura que el contenido pueda crecer */
 }
+
 
 h1 {
   color: #333;

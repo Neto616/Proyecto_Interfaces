@@ -22,6 +22,12 @@ const cryptr_1 = __importDefault(require("cryptr"));
 const cryptr = new cryptr_1.default((process.env.SECRET || ""), { saltLength: 10 });
 const route = (0, express_1.Router)();
 route.get("/session", (req, res) => res.send(req.session));
+route.get("/cerrar-sesion", (req, res) => {
+    var _a;
+    if ((_a = req.session) === null || _a === void 0 ? void 0 : _a.usuario)
+        req.session.destroy((err) => console.log(err));
+    res.redirect("/");
+});
 route.get("/user-info", [authMdw_1.hasAccount], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const connection = yield db_1.db.connect();
@@ -60,6 +66,9 @@ route.get("/get-gastos", [authMdw_1.hasAccount], (req, res) => __awaiter(void 0,
     }
 }));
 route.get("/iniciar-sesion", (req, res) => {
+    res.sendFile(path_1.default.join(__dirname, "../client/index.html"));
+});
+route.get("/crear-cuenta", (req, res) => {
     res.sendFile(path_1.default.join(__dirname, "../client/index.html"));
 });
 route.get("/", [authMdw_1.hasAccount], (req, res) => {
