@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatito</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body style="background-color: #f4e9ed; font-family: 'Poppins', sans-serif;">
+    <div style="background-color: aqua; position: fixed; top: 12%; left: 12%; bottom: 0%; right: 0%;">
+        <div class="chat-container" style="padding-left: 5%; padding-right: 5%; padding-top: 5%;">
+            <!-- Indicadores de escritura -->
+            <div class="escribiendo" id="escribiendo-usuario">Tú estás escribiendo...</div>
+            <div class="escribiendo" id="escribiendo-chatito">Chatito está escribiendo...</div>
+
+            <div class="mensajes">
+              <!-- Mensajes de ejemplo -->
+              <div class="mensaje recibido">Hola, ¿en qué puedo ayudarte?</div>
+              <div class="mensaje enviado">Quiero revisar mis gastos de marzo.</div>
+            </div>
+          
+            <div class="input-area">
+              <input type="text" class="input-moderno" placeholder="Escribe tu mensaje...">
+              <button class="btn-icono">
+                <img src="img/enviar.png" alt="Enviar">
+              </button>
+              <button class="btn-icono">
+                <img src="img/adjuntar.png" alt="Adjuntar">
+              </button>
+            </div>
+          </div>
+          
+    </div>
+    
+    <div class="card" style="padding: 20px; height: 9%; background-color: #f4e9ed; position: fixed; top: 0px; right: -10px; left: -10px;">
+        <h2 style="text-align: left; padding-left: 15%;">Dashboard Principal</h2>
+        <h3 style="position: fixed; right: 115px; top: 25px;">Hola! ...</h3>
+        <button class="btn-usuario" style="position: fixed; right: 20px; top: 20px;">
+            <img src="img/6522581.png" style="width: 50px; height: 50px;" alt="icono">
+          </button>
+    </div>
+
+    <div class="card" style="width: 215px; position: fixed; left: -15px; top: 0px; bottom: -10px; width: 14%;">
+        <img src="img/2640804.png" style="padding-left: 18%; margin-top: 30px; width: 70%;"/>
+        <p style="padding-left: 10px;">Proyecto Finanzas</p>
+        <button class="btn-pilar" style="margin-top: 100px; padding-left: 40px; width: 100%;">Dashboard</button>
+        <button class="btn-pilar" style="padding-left: 40px; width: 100%;">Habla con Chatito</button>
+        <button class="btn-pilar" style="padding-left: 40px; width: 100%;">Cerrar Sesión</button>
+    </div>
+    
+</body>
+</html>
