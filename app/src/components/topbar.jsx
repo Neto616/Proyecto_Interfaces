@@ -4,9 +4,15 @@ import userIcon from "../img/6522581.png";
 
 
 function TopBar() {
+    const [seccion, setSeccion] = useState("");
     const [data, setData] = useState({
         nombre: (sessionStorage.getItem("nombre") || "...")
     })
+
+    function seccionName () {
+        if(location.pathname == "/chatito") setSeccion("Habla con Chatito");
+        else setSeccion("Dashboard principal");
+    }
 
     useEffect( ()=> {
         async function fetchUserData (){
@@ -20,7 +26,7 @@ function TopBar() {
                 }
             }
         };
-
+        seccionName();
         fetchUserData();
     }, [])
     return (
@@ -34,7 +40,7 @@ function TopBar() {
             left: "-10px"}}>
             <h2 style={{
                 textAlign: "left", 
-                paddingLeft: "15%"}}>Dashboard Principal</h2>
+                paddingLeft: "15%"}}>{seccion}</h2>
             <h3 style={{
                 position: "fixed",
                 right: "115px",

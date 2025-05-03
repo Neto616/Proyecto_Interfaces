@@ -24,9 +24,15 @@ const route = (0, express_1.Router)();
 route.get("/session", (req, res) => res.send(req.session));
 route.get("/cerrar-sesion", (req, res) => {
     var _a;
-    if ((_a = req.session) === null || _a === void 0 ? void 0 : _a.usuario)
-        req.session.destroy((err) => console.log(err));
-    res.redirect("/");
+    try {
+        if ((_a = req.session) === null || _a === void 0 ? void 0 : _a.usuario)
+            req.session.destroy((err) => console.log(err));
+        return res.redirect("/");
+    }
+    catch (error) {
+        console.log(error);
+        return res.redirect("/");
+    }
 });
 route.get("/user-info", [authMdw_1.hasAccount], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -71,10 +77,12 @@ route.get("/iniciar-sesion", (req, res) => {
 route.get("/crear-cuenta", (req, res) => {
     res.sendFile(path_1.default.join(__dirname, "../client/index.html"));
 });
+route.get("/chatito", (req, res) => {
+    res.sendFile(path_1.default.join(__dirname, "../client/index.html"), (error) => console.log(error));
+});
 route.get("/", [authMdw_1.hasAccount], (req, res) => {
     console.log("La sesion es: ", req.session);
     if (req.session.usuario) {
-        console.log("Hola   ");
         return res.sendFile(path_1.default.join(__dirname, "../client/index.html"), (err) => console.log("Ha ocurrido un error", err));
     }
     return res.redirect("/iniciar-sesion");

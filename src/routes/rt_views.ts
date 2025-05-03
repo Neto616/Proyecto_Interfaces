@@ -12,9 +12,13 @@ const route: Router = Router();
 route.get("/session", (req: Request, res: Response)=> res.send(req.session))
 
 route.get("/cerrar-sesion", (req: Request, res: Response) => {
+    try {
         if(req.session?.usuario) req.session.destroy((err) => console.log(err));
-        res.redirect("/");
-
+        return res.redirect("/");
+    } catch (error) {   
+        console.log(error);
+        return res.redirect("/");
+    }
 })
 
 route.get("/user-info", [hasAccount],async (req: Request, res: Response) => {
@@ -60,16 +64,19 @@ route.get("/iniciar-sesion", (req: Request, res: Response) => {
 });
 
 route.get("/crear-cuenta", (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, "../client/index.html"))
-})
+    res.sendFile(path.join(__dirname, "../client/index.html"));
+});
+
+route.get("/chatito", (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, "../client/index.html"), (error) => console.log(error));
+});
 
 route.get("/", [hasAccount], (req: Request, res: Response) => {
     console.log("La sesion es: ",req.session)
     if(req.session.usuario){
-        console.log("Hola   ")
         return res.sendFile(path.join(__dirname, "../client/index.html"), (err)=> console.log("Ha ocurrido un error", err));
     }
-    return res.redirect("/iniciar-sesion")
+    return res.redirect("/iniciar-sesion");
 });
 
 export default route;
