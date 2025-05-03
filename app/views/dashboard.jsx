@@ -24,6 +24,8 @@ function DashBorad (){
 
     return (
         <div>
+            <TopBar />
+            <SideBar/>
             <div style={{
                 width: "max-content", 
                 backgroundColor: "#1f71a3"}}>

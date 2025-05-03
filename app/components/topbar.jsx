@@ -39,7 +39,7 @@ function TopBar() {
                 position: "fixed",
                 right: "115px",
                 top: "25px"}}>Hola! {data?.nombre}</h3>
-            <button className="btn-usuario" style={{
+            <button className="btn-usuario" id="btnMyAccount" style={{
                 position: "fixed", 
                 right: "20px", 
                 top: "20px"}}>
