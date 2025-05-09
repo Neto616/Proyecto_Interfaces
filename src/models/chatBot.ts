@@ -1,7 +1,11 @@
-class ChatBot {
-    constructor () {}
+import { Usuario, UsuarioRepository } from "./usuarios";
 
-    public async answerMessage(mensaje: string){}
+class ChatBot {
+    constructor (private idUser: number) {}
+}
+
+class ChatBotRepository {
+    constructor(public chatBot: ChatBot){}
 }
 
 export default ChatBot

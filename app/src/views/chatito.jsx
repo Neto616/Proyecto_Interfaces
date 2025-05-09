@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TopBar from "../components/topbar";
 import SideBar from "../components/sidebar";
 import imgEnviar from "../img/enviar.png";
@@ -30,6 +30,15 @@ function ChatBot() {
         setUserTurn(false);
         botMessage()
     }
+
+    async function fetch (endPoint, options){
+        const result = await(endPoint, options);
+        return await result.json();
+    }
+
+    useEffect(()=> {
+        
+    })
 
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>

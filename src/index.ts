@@ -7,6 +7,7 @@ import cors from "cors";
 import { default as vista } from './routes/rt_views';
 import { default as controller } from './routes/rt_controllers';
 import path from 'path';
+import { dbRedis } from './models/db';
 const app = express();
 const port = process.env.PORT || 3001;
 const upload = multer();
@@ -28,6 +29,18 @@ app.use(cors())
 app.use(upload.any());
 app.use("/", vista);
 app.use("/", controller);
+
+(async ()=> {
+    await dbRedis.connectDb();
+    // await dbRedis.setData("1", JSON);
+//     await dbRedis.setData("Llave_2", "Valor2");
+    await dbRedis.setData("Llave_3", JSON.stringify({
+        mensajes: ["<div key='0' className='mensaje recibido'>Hola papu</div>", 
+            "<div key='1' className='mensaje enviado'>Apoco si tilin?</div>",
+        "<div key='2' className='mensaje recibido'>Chi</div>"]
+    }));
+//     await dbRedis.getAllData();
+})()
 
 app.listen(port, ()=> {
     console.log(`Servidor corriendo en: http://localhost:${port}`);

@@ -3,7 +3,7 @@ import { UsuarioRepository } from "../models/usuarios";
 import { Gasto, GastoRepository } from "../models/gastos";
 import path from "path";
 import { hasAccount } from "../middlewares/authMdw";
-import { db } from "../models/db";
+import { db, dbRedis } from "../models/db";
 import Cryptr from "cryptr";
 
 const cryptr: Cryptr = new Cryptr((process.env.SECRET || ""), {saltLength: 10});
@@ -56,6 +56,21 @@ route.get("/get-gastos", [hasAccount], async (req: Request, res: Response) => {
         estatus: 0, 
         data: {}
      })
+    }
+})
+
+route.get("/get-chat", async (req: Request, res: Response) => {
+    try {
+        const data = await dbRedis.getData("Llave_3");
+        return res.json({
+            estatus: 1, 
+            info: {
+                data: data || []
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        return res.redirect("/");
     }
 })
 

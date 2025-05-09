@@ -71,6 +71,21 @@ route.get("/get-gastos", [authMdw_1.hasAccount], (req, res) => __awaiter(void 0,
         });
     }
 }));
+route.get("/get-chat", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = yield db_1.dbRedis.getData("Llave_3");
+        return res.json({
+            estatus: 1,
+            info: {
+                data: data || []
+            }
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.redirect("/");
+    }
+}));
 route.get("/iniciar-sesion", (req, res) => {
     res.sendFile(path_1.default.join(__dirname, "../client/index.html"));
 });

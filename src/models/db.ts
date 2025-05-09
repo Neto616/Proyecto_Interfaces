@@ -2,6 +2,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import mysql, { PoolOptions, Connection } from "mysql2/promise";
+import { createClient } from "redis"
 
 class DB {
     private configuration: PoolOptions;
@@ -35,4 +36,54 @@ class DB {
     }
 }
 
+class redisDB {
+    public client;
+    constructor(){
+        this.client = createClient({
+            username: process.env.REDIS_USER || '',
+            password: process.env.REDIS_PASS || '',
+            socket: {
+                host: process.env.REDIS_HOST || '',
+                port: parseInt(process.env.REDIS_PORT || "6379") 
+            }
+        });
+        this.client.on('error', (error) => console.log("Ha ocurrido un error al conectarse con redis: ", error));
+    }
+
+    public async connectDb() {
+        await this.client.connect();
+        console.log("Conexión exitosa");
+    }
+
+    public async getAllData() {
+        const keys = await this.client.keys("*");
+        const result = [];
+        for (const key of keys) {
+            const value = await this.client.get(key);
+            result.push({key, value});
+        }
+        console.log("Todos los datos de la base son: ", result)
+        await this.client.quit();
+    }
+
+    public async getData(key: string) {
+        return await this.client.get(key);
+    }
+
+    public async setData(key: string, value: string){
+        await this.client.set(key, value);
+        return ;
+    }
+
+    public async getJSONData(key: string){
+        return await this.client.hGetAll(key);
+    }
+
+    public async setJSONData(key: string, value: any){
+        await this.client.hSet(key, value);
+        return ;
+    }
+}
+
 export const db = new DB();
+export const dbRedis = new redisDB();

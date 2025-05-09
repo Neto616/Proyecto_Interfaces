@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -12,6 +21,7 @@ const cors_1 = __importDefault(require("cors"));
 const rt_views_1 = __importDefault(require("./routes/rt_views"));
 const rt_controllers_1 = __importDefault(require("./routes/rt_controllers"));
 const path_1 = __importDefault(require("path"));
+const db_1 = require("./models/db");
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3001;
 const upload = (0, multer_1.default)();
@@ -32,6 +42,17 @@ app.use((0, cors_1.default)());
 app.use(upload.any());
 app.use("/", rt_views_1.default);
 app.use("/", rt_controllers_1.default);
+(() => __awaiter(void 0, void 0, void 0, function* () {
+    yield db_1.dbRedis.connectDb();
+    // await dbRedis.setData("1", JSON);
+    //     await dbRedis.setData("Llave_2", "Valor2");
+    yield db_1.dbRedis.setData("Llave_3", JSON.stringify({
+        mensajes: ["<div key='0' className='mensaje recibido'>Hola papu</div>",
+            "<div key='1' className='mensaje enviado'>Apoco si tilin?</div>",
+            "<div key='2' className='mensaje recibido'>Chi</div>"]
+    }));
+    //     await dbRedis.getAllData();
+}))();
 app.listen(port, () => {
     console.log(`Servidor corriendo en: http://localhost:${port}`);
 });
