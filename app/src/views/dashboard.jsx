@@ -42,6 +42,7 @@ function DashBorad (){
                         padding: "20px", 
                         backgroundColor: "#e1d0d6"}}>
                         <h3 style={{paddingLeft: "5px"}}>División de Gastos:</h3>
+                        <Graph width={"400px"} height={"500px"} typeGraph="doughnut" />
                         <button className="btn-pilar" style={{
                             fontSize: "14px", 
                             borderRadius: "20px"}}>Añadir Categorias</button>
@@ -52,7 +53,7 @@ function DashBorad (){
                         padding: "10px", 
                         backgroundColor: "#e1d0d6"}}>
                         <h3 style={{paddingLeft: "20px"}}>Gráfico:</h3>
-                        <Graph width={"25px"} height={"25px"} />
+                        <Graph width={"400px"} height={"500px"} />
                     </div>
                 </div>
                 <div style={{
@@ -91,7 +92,7 @@ function DashBorad (){
                         marginTop: "12px", height: "max-content", padding: "10px",
                         backgroundColor: "#e1d0d6"}}>
                         <h3 style={{paddingLeft: "20px"}}>Gráfico:</h3>
-                        <Graph width={"25px"} height={"25 px"} />
+                        <Graph width={"400px"} height={"500px"} />
                     </div>
                 </div>
             </div>

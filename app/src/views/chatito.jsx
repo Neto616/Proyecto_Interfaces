@@ -1,14 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import TopBar from "../components/topbar";
 import SideBar from "../components/sidebar";
 import imgEnviar from "../img/enviar.png";
 import imgAdjuntar from "../img/adjuntar.png";
 
 function ChatBot() {
+    const mensajesEndRef = useRef(null);
     const [message, setMessage] = useState("");
     const [botTurn, setBotTurn] = useState(false);
     const [userTurn, setUserTurn] = useState(false);
-    const [mensajes, setMensajes] = useState([<div key="0" className="mensaje recibido">Hola papu</div>]);
+    const [mensajes, setMensajes] = useState([]); 
+
+    async function obtain_data (endPoint, options){
+        const result = await fetch(endPoint, options);
+        return await result.json();
+    }
+
+    useEffect(() => {
+        if (mensajesEndRef.current) {
+            mensajesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [mensajes]);
+
+    useEffect(()=> {
+        const resultado = (async()=> {
+            const result = await obtain_data("http://localhost:3001/get-chat", {
+                method: "POST", 
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({usrMsj: ""})
+            });
+            const info = result.info.data;
+            console.log(info)
+            setMensajes(info);
+        })
+        resultado();
+    }, []);
 
     function warnMessage (userTurn, botTurn) {
         if(userTurn && !botTurn) return <div className="escribiendo" id="escribiendo-usuario">Tú estás escribiendo...</div>;
@@ -18,27 +44,26 @@ function ChatBot() {
 
     function botMessage(){
         setBotTurn(true);
-        setTimeout(()=>{
-            setMensajes(prev => [...prev, <div key={prev.length + 1} className="mensaje recibido">Esta será una respuesta</div>])
+        const resultado = (async()=>{
+            const result = await obtain_data("http://localhost:3001/get-chat", {
+                method: "POST", 
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({usrMsj: message})
+            });
+            console.log(result)
+            setMensajes(prev => [...prev, ...result.info.data])
             setBotTurn(false);
-        }, 1000 * 3);
+            setMessage("");
+        });
+
+        resultado();
     }
 
     function sendMessage (msj) {
-        setMensajes([...mensajes, <div key={mensajes.length + 1} className="mensaje enviado">{msj}</div>]);
-        setMessage("");
+        setMensajes([...mensajes,{tipo: "mensaje enviado", mensaje: msj}]);
         setUserTurn(false);
         botMessage()
     }
-
-    async function fetch (endPoint, options){
-        const result = await(endPoint, options);
-        return await result.json();
-    }
-
-    useEffect(()=> {
-        
-    })
 
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
@@ -60,15 +85,14 @@ function ChatBot() {
                 }}>
                     <div className="chat-container" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                         <div className="mensajes" style={{ flex: 1, overflowY: "auto" }}>
-                            {mensajes.map((e, i) => (e))}
+                            {mensajes.map((e, i) => (<div key= {i} style={e.tipo === "mensaje recibido" ? { whiteSpace: "pre-line" } : {}} className={e.tipo}>{e.mensaje}</div>))}
+                            <div ref={mensajesEndRef}></div>
                         </div>
-
                         {/* Indicadores justo arriba del área de entrada */}
-                        <div>{warnMessage(userTurn, botTurn)}</div>
+                        <div >{warnMessage(userTurn, botTurn)}</div>
 
                         <div className="input-area">
-                            <input
-                                type="text"
+                            <input type="text"
                                 className="input-moderno"
                                 placeholder="Escribe tu mensaje..."
                                 value={message}
@@ -76,8 +100,7 @@ function ChatBot() {
                                     const newMesage = e.target.value
                                     setMessage(newMesage);
                                     setUserTurn(newMesage.length > 0);
-                                }}
-                            />
+                                }}/>
                             <button className="btn-icono" type="button" onClick={() => sendMessage(message)}>
                                 <img src={imgEnviar} alt="Enviar" />
                             </button>

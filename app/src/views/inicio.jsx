@@ -34,7 +34,7 @@ function Login({ alert }) {
             e.preventDefault();
             sessionStorage.clear();
             console.log("Data Login: ", dataLogin)
-            const result = await fetch("/iniciar-sesion",{
+            const result = await fetch("http://localhost:3001/iniciar-sesion",{
                 method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(dataLogin)

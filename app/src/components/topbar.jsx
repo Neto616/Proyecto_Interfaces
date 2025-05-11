@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/style.css";
 import userIcon from "../img/6522581.png";
 
 
 function TopBar() {
+    const navigate = useNavigate();
     const [seccion, setSeccion] = useState("");
     const [data, setData] = useState({
         nombre: (sessionStorage.getItem("nombre") || "...")
-    })
+    });
 
     function seccionName () {
         if(location.pathname == "/chatito") setSeccion("Habla con Chatito");
         else setSeccion("Dashboard principal");
+    }
+
+    function moveToLogin() {
+        navigate("/iniciar-sesion")
     }
 
     useEffect( ()=> {
@@ -48,7 +54,8 @@ function TopBar() {
             <button className="btn-usuario" id="btnMyAccount" style={{
                 position: "fixed", 
                 right: "20px", 
-                top: "20px"}}>
+                top: "20px"}}
+                onClick={ ()=> moveToLogin()}>
                 <img src={userIcon} style={{
                     width: "50px", 
                     height: "50px"}} alt="icono" />

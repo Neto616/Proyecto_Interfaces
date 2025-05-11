@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Chart } from "chart.js/auto";
 
-function Graph({ width, height}){
+function Graph({ width, height, typeGraph = "bar" }){
     const chartRef = useRef(null);
 
     useEffect(()=>{
         const ctx = chartRef.current.getContext("2d");
 
         const graph = new Chart(ctx, {
-            type: 'bar',
+            type: typeGraph,
             data: {
                 labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
                 datasets: [{
@@ -34,6 +34,7 @@ function Graph({ width, height}){
                 }]
             },
             options: {
+                responsive: true,
                 scales: {
                     y: {
                         beginAtZero: true
@@ -47,9 +48,9 @@ function Graph({ width, height}){
     [])
 
     return (
-        <>
-         <canvas ref={chartRef} width={width} height={height}></canvas>
-        </>
+        <div style={{width: width, height: height}}>
+         <canvas ref={chartRef} ></canvas>
+        </div>
     );
 }
 
