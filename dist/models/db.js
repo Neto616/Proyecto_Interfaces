@@ -64,6 +64,11 @@ class redisDB {
             console.log("Conexión exitosa");
         });
     }
+    deleteDb() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.client.flushDb();
+        });
+    }
     getAllData() {
         return __awaiter(this, void 0, void 0, function* () {
             const keys = yield this.client.keys("*");
@@ -73,18 +78,28 @@ class redisDB {
                 result.push({ key, value });
             }
             console.log("Todos los datos de la base son: ", result);
-            yield this.client.quit();
         });
     }
     getData(key) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.client.get(key);
+            var _a;
+            try {
+                return (_a = yield this.client.get(key)) !== null && _a !== void 0 ? _a : "[]";
+            }
+            catch (error) {
+                return "";
+            }
         });
     }
     setData(key, value) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.client.set(key, value);
-            return;
+            try {
+                yield this.client.set(key, value);
+                return;
+            }
+            catch (error) {
+                console.log("Ocurrio un error guardando la info :C", error);
+            }
         });
     }
     getJSONData(key) {

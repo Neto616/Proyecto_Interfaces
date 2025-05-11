@@ -12,6 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const express_1 = require("express");
 const usuarios_1 = require("../models/usuarios");
 const gastos_1 = require("../models/gastos");
@@ -34,13 +36,13 @@ route.get("/cerrar-sesion", (req, res) => {
         return res.redirect("/");
     }
 });
+//Obtencion de datos
 route.get("/user-info", [authMdw_1.hasAccount], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const connection = yield db_1.db.connect();
         const service = new usuarios_1.UsuarioRepository(connection);
         const { userNumber } = req.session.usuario;
         const result = yield service.getInfo(parseInt(cryptr.decrypt(userNumber) || "0"));
-        console.log(result);
         return res.json(result);
     }
     catch (error) {
@@ -71,13 +73,41 @@ route.get("/get-gastos", [authMdw_1.hasAccount], (req, res) => __awaiter(void 0,
         });
     }
 }));
-route.get("/get-chat", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+//Rutas para el chat
+route.post("/get-chat", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const data = yield db_1.dbRedis.getData("Llave_3");
+        const idUser = cryptr.decrypt(req.session.usuario.userNumber);
+        let data = JSON.parse(yield db_1.dbRedis.getData(idUser.toString()));
+        const usrMsj = (_a = req.body.usrMsj) !== null && _a !== void 0 ? _a : "";
+        const fetchData = yield fetch(`http://localhost:8000/chat_bot?password=${process.env.API_PASS}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: usrMsj !== null && usrMsj !== void 0 ? usrMsj : "", correo: req.session.usuario.correo })
+        });
+        const { estatus, result } = yield fetchData.json();
+        if (data && usrMsj) {
+            let msjArr = data;
+            msjArr.push({ tipo: "mensaje enviado", mensaje: usrMsj });
+            data = msjArr;
+        }
+        ;
+        if (data.length && !usrMsj) {
+            return res.json({
+                estatus: 1,
+                info: {
+                    data: data || []
+                }
+            });
+        }
+        data.push({ tipo: "mensaje recibido", mensaje: result.respuesta_bot });
+        yield db_1.dbRedis.setData(idUser.toString(), JSON.stringify(data));
+        data = JSON.parse(yield db_1.dbRedis.getData(idUser.toString()));
+        const lastMsj = [data[data.length - 1]];
         return res.json({
             estatus: 1,
             info: {
-                data: data || []
+                data: (usrMsj ? lastMsj : data) || []
             }
         });
     }
@@ -86,17 +116,17 @@ route.get("/get-chat", (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.redirect("/");
     }
 }));
+//Carga de vistas
 route.get("/iniciar-sesion", (req, res) => {
     res.sendFile(path_1.default.join(__dirname, "../client/index.html"));
 });
 route.get("/crear-cuenta", (req, res) => {
     res.sendFile(path_1.default.join(__dirname, "../client/index.html"));
 });
-route.get("/chatito", (req, res) => {
-    res.sendFile(path_1.default.join(__dirname, "../client/index.html"), (error) => console.log(error));
+route.get("/chatito", [authMdw_1.hasAccount], (req, res) => {
+    res.sendFile(path_1.default.join(__dirname, "../client/index.html"));
 });
 route.get("/", [authMdw_1.hasAccount], (req, res) => {
-    console.log("La sesion es: ", req.session);
     if (req.session.usuario) {
         return res.sendFile(path_1.default.join(__dirname, "../client/index.html"), (err) => console.log("Ha ocurrido un error", err));
     }

@@ -1,13 +1,13 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
+const pruebaLocal = true
 module.exports = {
     entry: './app/src/index.jsx',
     output: {
       path: path.resolve(__dirname, 'dist/client'),
       filename: 'bundle.js',
-      publicPath: '/static/', 
+      publicPath:pruebaLocal ? '/' : '/static/', 
     },
     module: {
       rules: [
