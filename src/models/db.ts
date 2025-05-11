@@ -1,4 +1,3 @@
-
 import dotenv from 'dotenv';
 dotenv.config();
 import mysql, { PoolOptions, Connection } from "mysql2/promise";
@@ -55,6 +54,10 @@ class redisDB {
         console.log("Conexión exitosa");
     }
 
+    public async deleteDb(){
+        return await this.client.flushDb();
+    }
+
     public async getAllData() {
         const keys = await this.client.keys("*");
         const result = [];
@@ -63,16 +66,23 @@ class redisDB {
             result.push({key, value});
         }
         console.log("Todos los datos de la base son: ", result)
-        await this.client.quit();
     }
 
     public async getData(key: string) {
-        return await this.client.get(key);
+        try {
+            return await this.client.get(key) ?? "[]";
+        } catch (error) {
+            return ""
+        }
     }
 
     public async setData(key: string, value: string){
-        await this.client.set(key, value);
-        return ;
+        try {
+            await this.client.set(key, value);
+            return ;
+        } catch (error) {
+            console.log("Ocurrio un error guardando la info :C", error)
+        }
     }
 
     public async getJSONData(key: string){

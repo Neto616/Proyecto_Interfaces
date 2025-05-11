@@ -18,7 +18,7 @@ const ctrl_service = {
             if(login.estatus === 1) {
                 console.log("Creacion de una cookie")
                 req.session.usuario = login.info;
-                console.log(req.session)
+                // console.log(req.session)
             }
 
             return res.json(login);

@@ -43,7 +43,8 @@ class AuthService {
                             estatus, 
                             info: {
                                 userNumber: cryptr.encrypt(info.data[0].id.toString()),
-                                name: `${info.data[0].nombre} ${info.data[0].apellido}`
+                                name: `${info.data[0].nombre} ${info.data[0].apellido}`,
+                                correo: info.data[0].correo
                             }
                         }
                     }

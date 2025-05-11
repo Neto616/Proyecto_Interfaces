@@ -34,12 +34,15 @@ app.use("/", controller);
     await dbRedis.connectDb();
     // await dbRedis.setData("1", JSON);
 //     await dbRedis.setData("Llave_2", "Valor2");
-    await dbRedis.setData("Llave_3", JSON.stringify({
-        mensajes: ["<div key='0' className='mensaje recibido'>Hola papu</div>", 
-            "<div key='1' className='mensaje enviado'>Apoco si tilin?</div>",
-        "<div key='2' className='mensaje recibido'>Chi</div>"]
-    }));
-//     await dbRedis.getAllData();
+    // await dbRedis.setData("Llave_3", JSON.stringify({
+    //     mensajes: ["<div key='0' className='mensaje recibido'>Hola papu</div>", 
+    //         "<div key='1' className='mensaje enviado'>Apoco si tilin?</div>",
+    //     "<div key='2' className='mensaje recibido'>Chi</div>"]
+    // }));
+    // let resultado = await dbRedis.getData("4")
+    // console.log(JSON.parse(resultado));
+    // await dbRedis.getAllData();
+    // await dbRedis.deleteDb();
 })()
 
 app.listen(port, ()=> {
