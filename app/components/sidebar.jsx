@@ -6,7 +6,7 @@ function SideBar() {
     return (
         <div className="card" style={{
             width: "215px", position: "fixed", left: "-15px", 
-            top: "0px", bottom: "-10px", width: "14%"}}>
+            top: "0px", bottom: "-10px", width: "14%", borderRadius: "0px" }}>
             <img src={logo} style={{paddingLeft: "18%", marginTop: "30px", width: "70%"}}/>
             <p style={{paddingLeft: "10px"}}>Proyecto Finanzas</p>
             <button className="btn-pilar" style={{
