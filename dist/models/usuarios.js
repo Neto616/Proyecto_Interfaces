@@ -17,8 +17,7 @@ exports.UsuarioRepository = exports.Usuario = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const cryptr_1 = __importDefault(require("cryptr"));
-//Modulos creados
-const db_1 = __importDefault(require("./db"));
+const cryptr = new cryptr_1.default((process.env.SECRET || ""), { saltLength: 10 });
 class Usuario {
     constructor(correo, contrasena, nombre, apellido) {
         this.correo = correo;
@@ -37,7 +36,6 @@ class Usuario {
     }
     encodePass() {
         try {
-            const cryptr = new cryptr_1.default((process.env.SECRET || ""), { saltLength: 10 });
             const contrasena = this.contrasena;
             this.setPass(cryptr.encrypt(contrasena));
             return this.contrasena;
@@ -50,7 +48,6 @@ class Usuario {
     ;
     decodePass(contrasena) {
         try {
-            const cryptr = new cryptr_1.default((process.env.SECRET || ""), { saltLength: 10 });
             return cryptr.decrypt(contrasena);
         }
         catch (error) {
@@ -61,30 +58,13 @@ class Usuario {
     ;
 }
 exports.Usuario = Usuario;
-class UsuarioRepository extends db_1.default {
-    existUser(usuario) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                yield this.checkConnection();
-                const [rows] = (yield this.connection.execute(`
-                select 
-                    * 
-                from usuarios 
-                where correo = ?
-                limit 1`, [usuario.correo])) || [void []];
-                console.log(rows);
-                return rows.length ? true : false;
-            }
-            catch (error) {
-                return false;
-            }
-        });
+class UsuarioRepository {
+    constructor(connection) {
+        this.connection = connection;
     }
-    ;
     findUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 const [rows] = yield this.connection.execute(`select
                     *
                 from usuarios
@@ -101,7 +81,6 @@ class UsuarioRepository extends db_1.default {
     existOtherUser(id, usuario) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 const [rows] = yield this.connection.execute(`select
                     *
                 from usuarios
@@ -116,10 +95,66 @@ class UsuarioRepository extends db_1.default {
             }
         });
     }
+    existUser(usuario) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const [rows] = (yield this.connection.execute(`
+                select 
+                    * 
+                from usuarios 
+                where correo = ?
+                limit 1`, [usuario.correo])) || [void []];
+                console.log(rows);
+                return rows.length ? true : false;
+            }
+            catch (error) {
+                return false;
+            }
+        });
+    }
+    getUserData(usuario) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const existUser = yield this.existUser(usuario);
+                if (!existUser) {
+                    return {
+                        estatus: 2,
+                        info: {
+                            message: "El usuario no existe",
+                            data: [{ id: 0, nombre: "", apellido: "",
+                                    correo: "", contrasena: "",
+                                    fecha_creacion: " " }]
+                        }
+                    };
+                }
+                const [rows] = yield this.connection.execute(`select
+                *
+                from usuarios
+                where correo = ?
+                limit 1`, [usuario.getCorreo()]);
+                return {
+                    estatus: 1,
+                    info: {
+                        message: "Datos del usuario",
+                        data: rows
+                    }
+                };
+            }
+            catch (error) {
+                console.log(error);
+                return {
+                    estatus: 0,
+                    info: {
+                        message: "Ha ocurrido un error: " + error,
+                        data: []
+                    }
+                };
+            }
+        });
+    }
     getInfo(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 const userInfo = yield this.findUserById(id);
                 if (!userInfo) {
                     return {
@@ -159,7 +194,6 @@ class UsuarioRepository extends db_1.default {
     createUser(usuario) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 const existUser = yield this.existUser(usuario);
                 if (existUser) {
                     return {
@@ -196,7 +230,6 @@ class UsuarioRepository extends db_1.default {
     updateUser(id, usuario) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 const existUser = yield this.existOtherUser(id, usuario);
                 if (existUser) {
                     return {
@@ -232,7 +265,6 @@ class UsuarioRepository extends db_1.default {
     updatePassword(id, lastPassword, usuario) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 const [rows] = yield this.connection.execute(`select
                     *
                 from usuarios
@@ -278,7 +310,6 @@ class UsuarioRepository extends db_1.default {
     deleteUser(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this.checkConnection();
                 const existUser = yield this.findUserById(id);
                 if (!existUser) {
                     return {

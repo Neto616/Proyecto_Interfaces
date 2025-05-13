@@ -1,6 +1,6 @@
 import { FieldPacket } from "mysql2";
 import { all_categories } from "../types/tipos_categorias";
-import DB from "./db";
+import { Connection } from 'mysql2/promise';
 
 class Categoria {
     constructor(public nombre: string, public icono: string = ""){ 
@@ -23,10 +23,10 @@ class Categoria {
     }
 }
 
-class CategoriaRepository extends DB {
+class CategoriaRepository {
+    constructor(private connection: Connection){}
     private async exist(categoria: Categoria, userId: number, active=true): Promise<boolean> {
         try {
-            await this.checkConnection();
             const [rows] = await this.connection.execute(
                 `select 
                     *
@@ -46,8 +46,6 @@ class CategoriaRepository extends DB {
 
     public async getAll(userId: number){
         try {
-            await this.checkConnection();
-
             const [categorias] = await this.connection.execute(
                 `select * from categorias`) as [all_categories[], FieldPacket[]];
             const [categorias_personalizadas] = await this.connection.execute(
@@ -85,7 +83,6 @@ class CategoriaRepository extends DB {
 
     public async crear(categoria: Categoria, userId: number) {
         try {
-            await this.checkConnection();
             const existActive: boolean = await this.exist(categoria, userId);
             const existDesactive: boolean = await this.exist(categoria, userId, false);
             
@@ -131,9 +128,9 @@ class CategoriaRepository extends DB {
             };
         }
     }
+    
     public async eliminar(categoria: Categoria, userId: number) {
         try {
-            await this.checkConnection();
             const exist: boolean = await this.exist(categoria, userId);
             if(!exist){
                 return {

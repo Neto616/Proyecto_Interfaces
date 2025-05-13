@@ -1,15 +1,18 @@
 import {Request, Response} from 'express';
 import { Usuario, UsuarioRepository } from '../models/usuarios';
+import { db } from '../models/db';
 
 const ctrl_usuario = {
     crear: async (req: Request, res: Response): Promise<Response> => {
         try {
+            const connection = await db.connect();
             const { correo, contrasena, nombre, apellido } = req.body;
+            console.log(req.body)
             const usuario: Usuario = new Usuario(correo, contrasena, nombre, apellido);
-            const service: UsuarioRepository = new UsuarioRepository();
+            const service: UsuarioRepository = new UsuarioRepository(connection);
             const result = await service.createUser(usuario);
             console.log(result);
-
+            
             return res.status(200).json(result);
         } catch (error) {
             console.log(error);
@@ -18,10 +21,11 @@ const ctrl_usuario = {
     },
     actualizar: async (req: Request, res: Response): Promise<Response> => {
         try {
+            const connection = await db.connect();
             const userId = res.locals.id;
             const { correo, nombre, apellido } = req.body;
             const usuario: Usuario = new Usuario(correo, "", nombre, apellido);
-            const service: UsuarioRepository = new UsuarioRepository();
+            const service: UsuarioRepository = new UsuarioRepository(connection);
             const result = await service.updateUser(userId, usuario);
             console.log(result);
 
@@ -33,8 +37,9 @@ const ctrl_usuario = {
     },
     eliminar: async (req: Request, res: Response): Promise<Response> => {
         try {
+            const connection = await db.connect();
             const userId = res.locals.id;
-            const service: UsuarioRepository = new UsuarioRepository();
+            const service: UsuarioRepository = new UsuarioRepository(connection);
             const result = await service.deleteUser(userId);
             
             return res.status(200).json(result);

@@ -12,9 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.dbRedis = exports.db = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const promise_1 = __importDefault(require("mysql2/promise"));
+const redis_1 = require("redis");
 class DB {
     constructor() {
         this.configuration = {
@@ -30,34 +32,87 @@ class DB {
             enableKeepAlive: true,
             keepAliveInitialDelay: 0,
         };
-        this.PoolConnect().then(() => console.log("Se ha conectado a la base de datos")).catch(error => console.log(error));
     }
     /**
      * PoolConnect
      */
-    PoolConnect() {
+    connect() {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
+            if (!this.connection) {
                 this.connection = yield promise_1.default.createConnection(this.configuration);
+                console.log("Se ha conectado a base de datos");
             }
-            catch (error) {
-                console.log(error);
-                return;
-            }
-        });
-    }
-    checkConnection() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                if (!this.connection)
-                    yield this.PoolConnect();
-                return;
-            }
-            catch (error) {
-                console.log(error);
-                return;
-            }
+            return this.connection;
         });
     }
 }
-exports.default = DB;
+class redisDB {
+    constructor() {
+        this.client = (0, redis_1.createClient)({
+            username: process.env.REDIS_USER || '',
+            password: process.env.REDIS_PASS || '',
+            socket: {
+                host: process.env.REDIS_HOST || '',
+                port: parseInt(process.env.REDIS_PORT || "6379")
+            }
+        });
+        this.client.on('error', (error) => console.log("Ha ocurrido un error al conectarse con redis: ", error));
+    }
+    connectDb() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.client.connect();
+            console.log("Conexión exitosa");
+        });
+    }
+    deleteDb() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.client.flushDb();
+        });
+    }
+    getAllData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const keys = yield this.client.keys("*");
+            const result = [];
+            for (const key of keys) {
+                const value = yield this.client.get(key);
+                result.push({ key, value });
+            }
+            console.log("Todos los datos de la base son: ", result);
+        });
+    }
+    getData(key) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            try {
+                return (_a = yield this.client.get(key)) !== null && _a !== void 0 ? _a : "[]";
+            }
+            catch (error) {
+                return "";
+            }
+        });
+    }
+    setData(key, value) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield this.client.set(key, value);
+                return;
+            }
+            catch (error) {
+                console.log("Ocurrio un error guardando la info :C", error);
+            }
+        });
+    }
+    getJSONData(key) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.client.hGetAll(key);
+        });
+    }
+    setJSONData(key, value) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.client.hSet(key, value);
+            return;
+        });
+    }
+}
+exports.db = new DB();
+exports.dbRedis = new redisDB();
