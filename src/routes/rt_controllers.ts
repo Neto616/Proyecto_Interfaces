@@ -4,6 +4,7 @@ import ctrl_service from "../controllers/ctrl_servicios";
 import { isCorreo, samePass } from "../middlewares/usersMdw";
 import categorias from "../controllers/ctrl_categorias";
 import { hasAccount } from "../middlewares/authMdw";
+import ctrl_gastos from "../controllers/ctrl_gastos";
 const route = Router();
 
 //usuarios
@@ -12,5 +13,12 @@ route.post("/crear-usuario", [isCorreo, samePass], ctrl_usuario.crear);
 route.put("/actualizar-usuario", ctrl_usuario.actualizar);
 
 //Categoria personalizada
-route.post("/crear-categoria", /*[hasAccount],*/ categorias.crear);
+route.post("/crear-categoria", categorias.crear);
+route.delete("/eliminar-categoria", categorias.eliminar);
+
+//Gastos
+route.post("/gasto", ctrl_gastos.crear);
+route.put("/gasto", ctrl_gastos.actualizar);
+route.delete("/gasto", ctrl_gastos.eliminar);
+
 export default route;
