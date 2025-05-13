@@ -20,9 +20,7 @@ const categorias = {
     crear: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const { nombre, icono } = req.body;
-            const userId = parseInt(
-            // cryptr.decrypt(req.session.usuario.userNumber)
-            "5");
+            const userId = parseInt(cryptr.decrypt(req.session.usuario.userNumber));
             const connection = yield db_1.db.connect();
             const categoria = new categorias_1.Categoria(nombre, icono);
             const service = new categorias_1.CategoriaRepository(connection);
@@ -32,6 +30,21 @@ const categorias = {
         }
         catch (error) {
             console.log("Ha sucedidad un error al crear la cateogria: ", error);
+            return res.json({ estatus: 0 });
+        }
+    }),
+    eliminar: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { nombre, icono } = req.body;
+            const userId = parseInt(cryptr.decrypt(req.session.usuario.userNumber));
+            const connection = yield db_1.db.connect();
+            const categoria = new categorias_1.Categoria(nombre, icono);
+            const service = new categorias_1.CategoriaRepository(connection);
+            const resultado = yield service.eliminar(categoria, userId);
+            return res.json(resultado);
+        }
+        catch (error) {
+            console.log("Ha sucedido un error al actualizar la categoria: ", error);
             return res.json({ estatus: 0 });
         }
     })

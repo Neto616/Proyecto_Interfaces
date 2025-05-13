@@ -28,6 +28,30 @@ const ctrl_gastos = {
         }
     }),
     actualizar: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const connection = yield db_1.db.connect();
+            const gasto = new gastos_1.Gasto(0, null, null, 0);
+            const service = new gastos_1.GastoRepository(connection);
+            const result = service.update(gasto, 0);
+            return res.status(200).json(result);
+        }
+        catch (error) {
+            console.log(error);
+            return res.status(500).json({ estatus: 0, info: { message: "Ha ocurrido un error: " + error } });
+        }
+    }),
+    eliminar: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { gasto } = req.query;
+            const conncection = yield db_1.db.connect();
+            const service = new gastos_1.GastoRepository(conncection);
+            const result = service.delete(parseInt(gasto || "0"));
+            return res.status(200).json(result);
+        }
+        catch (error) {
+            console.log(error);
+            return res.status(500).json({ estatus: 0, info: { message: "Ha ocurrido un error: " + error } });
+        }
     })
 };
 exports.default = ctrl_gastos;
