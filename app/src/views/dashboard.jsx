@@ -79,10 +79,33 @@ function DashBorad (){
                     top: "100px", 
                     right: "30px",
                     width: "40%",
-                    maxWidth: "40%"}}>
-                    <h4 style={{
-                        color: "#ad2959", 
-                        paddingLeft: "10px"}}>Recientes:</h4>
+                    maxWidth: "40%"
+                }}>
+                    <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        height: "15%",
+                        maxHeight: "15%"
+                    }}>
+                        <h4 style={{
+                            color: "#ad2959",
+                            paddingLeft: "10px",
+                            width: "35%"
+                        }}>Recientes:</h4>
+
+                        <button className="btn-pilar" style={{
+                            fontSize: "14px",
+                            borderRadius: "20px",
+                            width: "30%"
+                        }} onClick={openModalCargo}>Nuevo Cargo</button>
+
+                        <button className="btn-pilar" style={{
+                            fontSize: "14px",
+                            borderRadius: "20px",
+                            width: "30%"
+                        }} onClick={openModalIngreso}>Nuevo Ingreso</button>
+                    </div>
                     {gasto.length > 0 ? (gasto.map((e,i) => {
                         if(e.categoria_titulo || e.categoria_personalizada_titulo){
                             return <GastosRecientes 
@@ -98,15 +121,6 @@ function DashBorad (){
                         >
                             <h3>Ingresa tu primer cargo </h3>
                     </div>)}
-
-                                   
-                <button className="btn-pilar" style={{
-                    fontSize: "14px", borderRadius: "20px"
-                }} onClick={openModalIngreso}>Agregar Ingreso</button>
-
-                <button className="btn-pilar" style={{
-                    fontSize: "14px", borderRadius: "20px"
-                }} onClick={openModalCargo}>Agregar Cargo</button>
             
                     <div className="card" style={{
                         marginTop: "12px", height: "max-content", padding: "10px",
