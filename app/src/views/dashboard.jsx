@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import "../styles/style.css"
+//Componentes
 import SideBar from "../components/sidebar";
 import TopBar from "../components/topbar";
 import Graph from "../components/graphs";
 import GastosRecientes from "../components/gastos_recientes";
+import NewCategoria from "../components/modal/modal_categoria";
 
 function DashBorad (){
     const [gasto, setGasto] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const openModal = () => setIsOpen(true);
+    const closeModal = () => setIsOpen(false);
 
     useEffect(()=>{
         async function fetchGetGasto () {
@@ -27,6 +33,7 @@ function DashBorad (){
         <div>
             <TopBar />
             <SideBar/>
+            {isOpen ? <NewCategoria closeModal={closeModal} /> : null}
             <div style={{
                 width: "max-content", 
                 backgroundColor: "#1f71a3"}}>
@@ -45,7 +52,7 @@ function DashBorad (){
                         <Graph width={"400px"} height={"500px"} typeGraph="doughnut" />
                         <button className="btn-pilar" style={{
                             fontSize: "14px", 
-                            borderRadius: "20px"}}>Añadir Categorias</button>
+                            borderRadius: "20px"}} onClick={openModal}>Añadir Categorias</button>
                     </div>
                     <div className="card" style={{
                         marginTop: "30px", 
@@ -56,6 +63,7 @@ function DashBorad (){
                         <Graph width={"400px"} height={"500px"} />
                     </div>
                 </div>
+ 
                 <div style={{
                     position: "fixed",
                     top: "100px", 
@@ -78,15 +86,13 @@ function DashBorad (){
                         paddingLeft: "20px", 
                         backgroundColor: "#e1d0d6"}}
                         >
-                            <h3>👇🏾Ingresa tu primer cargo </h3>
+                            <h3>Ingresa tu primer cargo </h3>
                     </div>)}
-                    
-                    <button className="btn-pilar" style={{
-                        fontSize: "14px", borderRadius: "20px"
-                    }}>Nuevo Cargo</button>
-                    <button className="btn-pilar" style={{
-                        fontSize: "14px", borderRadius: "20px"
-                        }}>Nuevo Ingreso</button>
+
+                                   
+                <button className="btn-pilar" style={{
+                    fontSize: "14px", borderRadius: "20px"
+                }}>Agregar Movimiento</button>
             
                     <div className="card" style={{
                         marginTop: "12px", height: "max-content", padding: "10px",

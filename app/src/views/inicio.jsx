@@ -3,7 +3,6 @@ import { data, Link } from "react-router-dom"
 import { useNavigate } from 'react-router-dom';
 import "../styles/style.css";
 
-
 function Login({ alert }) {
     const [dataLogin, setDataLogin] = useState({
         correo: "",
