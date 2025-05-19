@@ -105,8 +105,6 @@ class ChatBotService:
             mensaje += f"- {cantidad} MXN el {fecha.strftime('%d/%m/%Y %H:%M:%S')}\n"
         return mensaje
     
-        pass
-    
     def agregar_gasto_cmd(self):
         pass
     

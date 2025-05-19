@@ -18,7 +18,12 @@ route.delete("/eliminar-categoria", categorias.eliminar);
 
 //Gastos
 route.post("/gasto", ctrl_gastos.crear);
-route.put("/gasto", ctrl_gastos.actualizar);
+route.put("/gasto", ctrl_gastos.actualizar); //No funciona aun
 route.delete("/gasto", ctrl_gastos.eliminar);
+
+//Ingresos
+// route.post("/ingreso")
+// route.put("/ingreso")
+// route.delete("/ingreso")
 
 export default route;
