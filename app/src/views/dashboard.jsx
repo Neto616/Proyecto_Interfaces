@@ -6,13 +6,21 @@ import TopBar from "../components/topbar";
 import Graph from "../components/graphs";
 import GastosRecientes from "../components/gastos_recientes";
 import NewCategoria from "../components/modal/modal_categoria";
+import NewIngreso from "../components/modal/modal_ingreso";
+import NewCargo from "../components/modal/modal_cargo";
 
 function DashBorad (){
     const [gasto, setGasto] = useState([]);
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpenCategoria, setIsOpenCategoria] = useState(false);
+    const [isOpenIngreso, setIsOpenIngreso] = useState(false);
+    const [isOpenCargo, setIsOpenCargo] = useState(false);
 
-    const openModal = () => setIsOpen(true);
-    const closeModal = () => setIsOpen(false);
+    const openModalCategoria  = () => setIsOpenCategoria(true);
+    const closeModalCategoria = () => setIsOpenCategoria(false);
+    const openModalIngreso    = () => setIsOpenIngreso(true);
+    const closeModalIngreso   = () => setIsOpenIngreso(false);
+    const openModalCargo    = () => setIsOpenCargo(true);
+    const closeModalCargo   = () => setIsOpenCargo(false);
 
     useEffect(()=>{
         async function fetchGetGasto () {
@@ -33,7 +41,9 @@ function DashBorad (){
         <div>
             <TopBar />
             <SideBar/>
-            {isOpen ? <NewCategoria closeModal={closeModal} /> : null}
+            {isOpenCategoria ? <NewCategoria closeModal={closeModalCategoria} /> : null}
+            {isOpenIngreso ? <NewIngreso closeModal={closeModalIngreso} /> : null}
+            {isOpenCargo ? <NewCargo closeModal={closeModalCargo} /> : null}
             <div style={{
                 width: "max-content", 
                 backgroundColor: "#1f71a3"}}>
@@ -52,7 +62,7 @@ function DashBorad (){
                         <Graph width={"400px"} height={"500px"} typeGraph="doughnut" />
                         <button className="btn-pilar" style={{
                             fontSize: "14px", 
-                            borderRadius: "20px"}} onClick={openModal}>Añadir Categorias</button>
+                            borderRadius: "20px"}} onClick={openModalCategoria}>Añadir Categorias</button>
                     </div>
                     <div className="card" style={{
                         marginTop: "30px", 
@@ -92,7 +102,11 @@ function DashBorad (){
                                    
                 <button className="btn-pilar" style={{
                     fontSize: "14px", borderRadius: "20px"
-                }}>Agregar Movimiento</button>
+                }} onClick={openModalIngreso}>Agregar Ingreso</button>
+
+                <button className="btn-pilar" style={{
+                    fontSize: "14px", borderRadius: "20px"
+                }} onClick={openModalCargo}>Agregar Cargo</button>
             
                     <div className="card" style={{
                         marginTop: "12px", height: "max-content", padding: "10px",
