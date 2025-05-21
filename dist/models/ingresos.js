@@ -1,5 +1,6 @@
 "use strict";
-class Ingresos {
+Object.defineProperty(exports, "__esModule", { value: true });
+class Ingreso {
     constructor(cantidad) {
         this.cantidad = cantidad;
     }
@@ -7,9 +8,16 @@ class Ingresos {
         return this.cantidad;
     }
     setCantidad(cantidad) {
-        this.cantidad = this.cantidadAceptable() ? cantidad : 0;
+        this.cantidad = cantidad;
     }
     cantidadAceptable() {
         return this.cantidad >= 0;
     }
+}
+class IngresoRepository {
+    constructor(connection) {
+        this.connection = connection;
+    }
+    guardarIngreso(ingreso, usrId) { }
+    eliminarIngreo(ingrsoId) { }
 }

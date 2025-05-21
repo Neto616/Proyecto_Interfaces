@@ -21,6 +21,7 @@ const path_1 = __importDefault(require("path"));
 const authMdw_1 = require("../middlewares/authMdw");
 const db_1 = require("../models/db");
 const cryptr_1 = __importDefault(require("cryptr"));
+const ctrl_categorias_1 = __importDefault(require("../controllers/ctrl_categorias"));
 const cryptr = new cryptr_1.default((process.env.SECRET || ""), { saltLength: 10 });
 const route = (0, express_1.Router)();
 route.get("/session", (req, res) => res.send(req.session));
@@ -61,7 +62,7 @@ route.get("/get-gastos", [authMdw_1.hasAccount], (req, res) => __awaiter(void 0,
         const { userNumber } = req.session.usuario;
         const gasto = new gastos_1.Gasto(0, null, null, parseInt(cryptr.decrypt(userNumber) || "0"));
         const service = new gastos_1.GastoRepository(connection);
-        const result = yield service.getAll(gasto);
+        const result = yield service.getAll(gasto, 1, 5);
         // console.log(result);
         return res.json(result);
     }
@@ -73,6 +74,7 @@ route.get("/get-gastos", [authMdw_1.hasAccount], (req, res) => __awaiter(void 0,
         });
     }
 }));
+route.get("/categorias", /* [hasAccount],*/ ctrl_categorias_1.default.getAll);
 //Rutas para el chat
 route.post("/get-chat", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;

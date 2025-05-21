@@ -5,6 +5,7 @@ import { isCorreo, samePass } from "../middlewares/usersMdw";
 import categorias from "../controllers/ctrl_categorias";
 import { hasAccount } from "../middlewares/authMdw";
 import ctrl_gastos from "../controllers/ctrl_gastos";
+import {hasEmptys, procesarDatos} from "../middlewares/cargos/crearMDW";
 const route = Router();
 
 //usuarios
@@ -17,7 +18,7 @@ route.post("/crear-categoria", categorias.crear);
 route.delete("/eliminar-categoria", categorias.eliminar);
 
 //Gastos
-route.post("/gasto", ctrl_gastos.crear);
+route.post("/gasto", [hasEmptys, procesarDatos],ctrl_gastos.crear);
 route.put("/gasto", ctrl_gastos.actualizar); //No funciona aun
 route.delete("/gasto", ctrl_gastos.eliminar);
 

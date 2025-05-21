@@ -11,11 +11,11 @@ class Gasto{
     }
     
     public getValueCategory(): (number | null) {
-        return this.valueCategory;
+        return this.valueCategory == 0 ? null : this.valueCategory;
     }
 
     public getValueCategoryP(): (number | null) {
-        return this.valueCategoryP;
+        return this.valueCategoryP == 0 ? null : this.valueCategoryP;
     }
 
     public getUserId(): number {
@@ -50,7 +50,7 @@ class GastoRepository {
                 left join categorias c on c.id = gcr.id_categoria
                 left join categoria_personalizada cp on cp.id = gcr.id_categoria_per and cp.usuario = ?
                 where g.usuario = ?
-                order by g.id
+                order by g.id desc
                 limit ${limit} offset ${offset};`,
                 [gasto.getUserId(), gasto.getUserId()]
             ) as [all_gastos[], FieldPacket[]];

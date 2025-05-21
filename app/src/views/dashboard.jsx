@@ -9,11 +9,12 @@ import NewCategoria from "../components/modal/modal_categoria";
 import NewIngreso from "../components/modal/modal_ingreso";
 import NewCargo from "../components/modal/modal_cargo";
 
-function DashBorad (){
+function DashBorad ({ alert }){
     const [gasto, setGasto] = useState([]);
     const [isOpenCategoria, setIsOpenCategoria] = useState(false);
     const [isOpenIngreso, setIsOpenIngreso] = useState(false);
     const [isOpenCargo, setIsOpenCargo] = useState(false);
+    const [categorias, setCategorias] = useState([]);
 
     const openModalCategoria  = () => setIsOpenCategoria(true);
     const closeModalCategoria = () => setIsOpenCategoria(false);
@@ -22,8 +23,18 @@ function DashBorad (){
     const openModalCargo    = () => setIsOpenCargo(true);
     const closeModalCargo   = () => setIsOpenCargo(false);
 
-    useEffect(()=>{
-        async function fetchGetGasto () {
+     const showSwal = (icon, title, text, showConfirmButton) => {
+        alert.fire({
+          position: "top-end",
+          icon,
+          title,
+          text,
+          showConfirmButton,
+          timer: 1500
+        })
+    }
+
+    const fetchGetGasto = async () => {
             try {
                 const result = await fetch("http://localhost:3001/get-gastos", {method: "GET"});
                 const data = await result.json();
@@ -34,16 +45,29 @@ function DashBorad (){
             }
         }
 
-        fetchGetGasto()
-    }, [])
+    useEffect(()=>{
+        async function fetchCategorias () {
+            try {
+                const result = await fetch("http://localhost:3001/categorias", {method: "GET"});
+                const data = await result.json();
+                console.log(data);
+                setCategorias(data.info.data);
+            } catch (error) {
+                console.log("Ha ocurrido un error :c :", error);
+            }
+        }
+
+        fetchCategorias();
+        fetchGetGasto();
+    }, []);
 
     return (
         <div>
             <TopBar />
             <SideBar/>
-            {isOpenCategoria ? <NewCategoria closeModal={closeModalCategoria} /> : null}
+            {isOpenCategoria ? <NewCategoria closeModal={closeModalCategoria} optionList={categorias} /> : null}
+            {isOpenCargo ? <NewCargo closeModal={closeModalCargo} categoriaList={categorias} alertFunction={showSwal} getGasto={fetchGetGasto}/> : null}
             {isOpenIngreso ? <NewIngreso closeModal={closeModalIngreso} /> : null}
-            {isOpenCargo ? <NewCargo closeModal={closeModalCargo} /> : null}
             <div style={{
                 width: "max-content", 
                 backgroundColor: "#1f71a3"}}>

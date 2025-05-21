@@ -21,10 +21,10 @@ class Gasto {
         return this.cantidad;
     }
     getValueCategory() {
-        return this.valueCategory;
+        return this.valueCategory == 0 ? null : this.valueCategory;
     }
     getValueCategoryP() {
-        return this.valueCategoryP;
+        return this.valueCategoryP == 0 ? null : this.valueCategoryP;
     }
     getUserId() {
         return this.userId;
@@ -57,7 +57,7 @@ class GastoRepository {
                 left join categorias c on c.id = gcr.id_categoria
                 left join categoria_personalizada cp on cp.id = gcr.id_categoria_per and cp.usuario = ?
                 where g.usuario = ?
-                order by g.id
+                order by g.id desc
                 limit ${limit} offset ${offset};`, [gasto.getUserId(), gasto.getUserId()]);
                 return {
                     estatus: 1,
