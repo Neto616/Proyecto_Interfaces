@@ -53,7 +53,7 @@ app.use("/", rt_controllers_1.default);
     // }));
     // let resultado = await dbRedis.getData("4")
     // console.log(JSON.parse(resultado));
-    // await dbRedis.getAllData();
+    yield db_1.dbRedis.getAllData();
     // await dbRedis.deleteDb();
 }))();
 app.listen(port, () => {

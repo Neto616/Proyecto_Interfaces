@@ -41,7 +41,7 @@ app.use("/", controller);
     // }));
     // let resultado = await dbRedis.getData("4")
     // console.log(JSON.parse(resultado));
-    // await dbRedis.getAllData();
+    await dbRedis.getAllData();
     // await dbRedis.deleteDb();
 })()
 

@@ -8,18 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const gastos_1 = require("../models/gastos");
 const db_1 = require("../models/db");
+const cryptr_1 = __importDefault(require("cryptr"));
+const cryptr = new cryptr_1.default((process.env.SECRET || ""), { saltLength: 10 });
 const ctrl_gastos = {
     crear: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
         try {
             const connection = yield db_1.db.connect();
-            const userId = res.locals.id;
+            const userId = parseInt(cryptr.decrypt(((_a = req.session.usuario) === null || _a === void 0 ? void 0 : _a.userNumber) || "0"));
             const { cantidad, categoria, categoria_p } = req.body;
+            console.log(`controlador\n\nCantidad: ${cantidad} \nCategoria: ${categoria}\nCategoria personalizada: ${categoria_p}`);
             const gasto = new gastos_1.Gasto(cantidad, categoria, categoria_p, userId);
             const service = new gastos_1.GastoRepository(connection);
-            const result = service.create(gasto);
+            const result = yield service.create(gasto);
             return res.status(200).json(result);
         }
         catch (error) {

@@ -7,6 +7,7 @@ import path from "path";
 import { hasAccount } from "../middlewares/authMdw";
 import { db, dbRedis } from '../models/db';
 import Cryptr from "cryptr";
+import categorias from '../controllers/ctrl_categorias';
 
 const cryptr: Cryptr = new Cryptr((process.env.SECRET || ""), {saltLength: 10});
 const route: Router = Router();
@@ -47,7 +48,7 @@ route.get("/get-gastos", [hasAccount], async (req: Request, res: Response) => {
         const {userNumber } = req.session.usuario;
         const gasto: Gasto = new Gasto(0, null, null, parseInt(cryptr.decrypt(userNumber) || "0"));
         const service: GastoRepository = new GastoRepository(connection);
-        const result = await service.getAll(gasto);
+        const result = await service.getAll(gasto, 1, 5);
         // console.log(result);
 
         return res.json(result);
@@ -59,6 +60,7 @@ route.get("/get-gastos", [hasAccount], async (req: Request, res: Response) => {
      })
     }
 })
+route.get("/categorias",/* [hasAccount],*/ categorias.getAll);
 //Rutas para el chat
 route.post("/get-chat", async (req: Request, res: Response) => {
     try {

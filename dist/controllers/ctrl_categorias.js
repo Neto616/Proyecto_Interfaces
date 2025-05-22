@@ -47,6 +47,22 @@ const categorias = {
             console.log("Ha sucedido un error al actualizar la categoria: ", error);
             return res.json({ estatus: 0 });
         }
+    }),
+    getAll: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const connect = yield db_1.db.connect();
+            // const {userNumber} = req.session.usuario;
+            let userNumber = 5;
+            const categoriaService = new categorias_1.CategoriaRepository(connect);
+            // const resultado = await categoriaService.getAll(parseInt(cryptr.decrypt(userNumber) || "0"));
+            const resultado = yield categoriaService.getAll(userNumber);
+            console.log(resultado);
+            return res.json(resultado);
+        }
+        catch (error) {
+            console.log(error);
+            return res.json({ estatus: 0 });
+        }
     })
 };
 exports.default = categorias;

@@ -17,7 +17,7 @@ function Index (){
             <BrowserRouter>
             <Suspense fallback={<div>Loading...</div>}/>
                 <Routes>
-                    <Route path="/" element= {<DashBorad />}></Route>
+                    <Route path="/" element= {<DashBorad alert={MySwal} />}></Route>
                     <Route path="/iniciar-sesion" element= {<Login alert={MySwal} />}></Route>
                     <Route path="/crear-cuenta" element= {<RegistroUsuario alert={MySwal} />}></Route>
                     <Route path="/chatito" element= {<ChatBot />}></Route>
