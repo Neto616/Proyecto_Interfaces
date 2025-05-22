@@ -34,7 +34,7 @@ function DashBorad() {
                 padding: "20px",
                 height: "calc(100vh - 120px)",
                 overflowY: "auto",
-                backgroundColor: "#1f71a3",
+                backgroundColor: "#f4e9ed",
                 display: "flex",
                 justifyContent: "space-between"
             }}>
