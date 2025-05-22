@@ -8,11 +8,12 @@ import { hasAccount } from "../middlewares/authMdw";
 import { db, dbRedis } from '../models/db';
 import Cryptr from "cryptr";
 import categorias from '../controllers/ctrl_categorias';
+import ctrl_ingresos from '../controllers/ctrl_ingresos';
 
 const cryptr: Cryptr = new Cryptr((process.env.SECRET || ""), {saltLength: 10});
 const route: Router = Router();
 
-route.get("/session", (req: Request, res: Response)=> res.send(req.session))
+route.get("/session", (req: Request, res: Response)=> res.send(req.session));
 
 route.get("/cerrar-sesion", (req: Request, res: Response) => {
     try {
@@ -22,7 +23,8 @@ route.get("/cerrar-sesion", (req: Request, res: Response) => {
         console.log(error);
         return res.redirect("/");
     }
-})
+});
+
 //Obtencion de datos
 route.get("/user-info", [hasAccount],async (req: Request, res: Response) => {
     try {
@@ -40,7 +42,7 @@ route.get("/user-info", [hasAccount],async (req: Request, res: Response) => {
             }
         })
     }
-})
+});
 
 route.get("/get-gastos", [hasAccount], async (req: Request, res: Response) => {
     try {
@@ -59,8 +61,12 @@ route.get("/get-gastos", [hasAccount], async (req: Request, res: Response) => {
         data: {}
      })
     }
-})
-route.get("/categorias",/* [hasAccount],*/ categorias.getAll);
+});
+
+route.get("/categorias", /*[hasAccount],*/ categorias.getAll);
+
+route.get("/ingresos", [], ctrl_ingresos.obtener_ingresos);
+
 //Rutas para el chat
 route.post("/get-chat", async (req: Request, res: Response) => {
     try {
@@ -104,7 +110,8 @@ route.post("/get-chat", async (req: Request, res: Response) => {
         console.log(error);
         return res.redirect("/");
     }
-})
+});
+
 //Carga de vistas
 route.get("/iniciar-sesion", (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, "../client/index.html"))

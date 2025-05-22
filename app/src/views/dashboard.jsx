@@ -1,32 +1,74 @@
 import React, { useEffect, useState } from "react";
 import "../styles/style.css";
+//Componentes
 import SideBar from "../components/sidebar";
 import TopBar from "../components/topbar";
 import Graph from "../components/graphs";
 import GastosRecientes from "../components/gastos_recientes";
+import NewCategoria from "../components/modal/modal_categoria";
+import NewIngreso from "../components/modal/modal_ingreso";
+import NewCargo from "../components/modal/modal_cargo";
 
-function DashBorad() {
+function DashBorad({ alert }) {
     const [gasto, setGasto] = useState([]);
+    const [isOpenCategoria, setIsOpenCategoria] = useState(false);
+    const [isOpenIngreso, setIsOpenIngreso] = useState(false);
+    const [isOpenCargo, setIsOpenCargo] = useState(false);
+    const [categorias, setCategorias] = useState([]);
 
-    useEffect(() => {
-        async function fetchGetGasto() {
+    const openModalCategoria  = () => setIsOpenCategoria(true);
+    const closeModalCategoria = () => setIsOpenCategoria(false);
+    const openModalIngreso    = () => setIsOpenIngreso(true);
+    const closeModalIngreso   = () => setIsOpenIngreso(false);
+    const openModalCargo    = () => setIsOpenCargo(true);
+    const closeModalCargo   = () => setIsOpenCargo(false);
+
+     const showSwal = (icon, title, text, showConfirmButton) => {
+        alert.fire({
+          position: "top-end",
+          icon,
+          title,
+          text,
+          showConfirmButton,
+          timer: 1500
+        })
+    }
+
+    const fetchGetGasto = async () => {
             try {
-                const result = await fetch("http://localhost:3001/get-gastos", { method: "GET" });
+                const result = await fetch("http://localhost:3001/get-gastos", {method: "GET"});
                 const data = await result.json();
-                setGasto(data.info.data);
+                console.log(data);
+                setGasto(data.info.data)
             } catch (error) {
                 console.log(error);
             }
         }
 
+    useEffect(() => {
+        async function fetchCategorias () {
+            try {
+                const result = await fetch("http://localhost:3001/categorias", {method: "GET"});
+                const data = await result.json();
+                console.log(data);
+                setCategorias(data.info.data);
+            } catch (error) {
+                console.log("Ha ocurrido un error :c :", error);
+            }
+        }
+
+        fetchCategorias();
         fetchGetGasto();
+
     }, []);
 
     return (
         <div>
             <TopBar />
             <SideBar />
-
+            {isOpenCategoria ? <NewCategoria closeModal={closeModalCategoria} optionList={categorias} /> : null}
+            {isOpenCargo ? <NewCargo closeModal={closeModalCargo} categoriaList={categorias} alertFunction={showSwal} getGasto={fetchGetGasto}/> : null}
+            {isOpenIngreso ? <NewIngreso closeModal={closeModalIngreso} /> : null}
             {/* Contenedor principal con scroll si el contenido crece */}
             <div style={{
                 marginLeft: "14%", // espacio para el sidebar
@@ -34,7 +76,7 @@ function DashBorad() {
                 padding: "20px",
                 height: "calc(100vh - 120px)",
                 overflowY: "auto",
-                backgroundColor: "#1f71a3",
+                backgroundColor: "#f4e9ed",
                 display: "flex",
                 justifyContent: "space-between"
             }}>
@@ -51,7 +93,7 @@ function DashBorad() {
                         <button className="btn-pilar" style={{
                             fontSize: "14px",
                             borderRadius: "20px"
-                        }}>Añadir Categorias</button>
+                        }} onClick={openModalCategoria}>Añadir Categorias</button>
                     </div>
 
                     <div className="card" style={{
@@ -81,13 +123,13 @@ function DashBorad() {
                             fontSize: "14px",
                             borderRadius: "20px",
                             width: "30%"
-                        }}>Nuevo Cargo</button>
+                        }} onClick={openModalCargo}>Nuevo Cargo</button>
 
                         <button className="btn-pilar" style={{
                             fontSize: "14px",
                             borderRadius: "20px",
                             width: "30%"
-                        }}>Nuevo Ingreso</button>
+                        }} onClick={openModalIngreso}>Nuevo Ingreso</button>
                     </div>
 
                     {gasto.length > 0 ? (gasto.map((e, i) => {
