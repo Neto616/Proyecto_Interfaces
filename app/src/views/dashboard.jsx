@@ -68,7 +68,7 @@ function DashBorad({ alert }) {
             <SideBar />
             {isOpenCategoria ? <NewCategoria closeModal={closeModalCategoria} optionList={categorias} /> : null}
             {isOpenCargo ? <NewCargo closeModal={closeModalCargo} categoriaList={categorias} alertFunction={showSwal} getGasto={fetchGetGasto}/> : null}
-            {isOpenIngreso ? <NewIngreso closeModal={closeModalIngreso} /> : null}
+            {isOpenIngreso ? <NewIngreso closeModal={closeModalIngreso} alert={showSwal}/> : null}
             {/* Contenedor principal con scroll si el contenido crece */}
             <div style={{
                 marginLeft: "14%", // espacio para el sidebar
