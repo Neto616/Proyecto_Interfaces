@@ -34,10 +34,11 @@ class IngresoRepository {
             try {
                 const [rows] = yield this.connection.execute(`
                 select
-                 +
+                 *
                 from ingresos
                 where id = ? and id_usuario = ?    
             `, [ingresoId, userId]);
+                console.log(rows);
                 return rows.length ? true : false;
             }
             catch (error) {

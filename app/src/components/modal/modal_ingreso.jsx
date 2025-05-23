@@ -1,7 +1,7 @@
 import React from "react";
 import "../../styles/style.css";
 
-function NewIngreso ({ closeModal, alert }) {
+function NewIngreso ({ closeModal, alert, getIngresos }) {
     const crearIngreso = async (e) => {
         try {
             e.preventDefault();
@@ -15,6 +15,8 @@ function NewIngreso ({ closeModal, alert }) {
             console.log(resultado)
             if(resultado.estatus == 1){
                 alert("success", "Proceso exitoso", "Se ha guardado el nuevo ingreso", false);
+                getIngresos();
+                closeModal();
             }
             else{
                 alert("info", "El proceso ha fallado", "Ha pasado algo de favor de intentarlo de nuevo", false);

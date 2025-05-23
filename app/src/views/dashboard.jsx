@@ -5,16 +5,19 @@ import SideBar from "../components/sidebar";
 import TopBar from "../components/topbar";
 import Graph from "../components/graphs";
 import GastosRecientes from "../components/gastos_recientes";
+import IngresosRecientes from "../components/ingresos_recientes";
 import NewCategoria from "../components/modal/modal_categoria";
 import NewIngreso from "../components/modal/modal_ingreso";
 import NewCargo from "../components/modal/modal_cargo";
 
 function DashBorad({ alert }) {
     const [gasto, setGasto] = useState([]);
+    const [showIngresos, setShowIngresos] = useState(false);
     const [isOpenCategoria, setIsOpenCategoria] = useState(false);
     const [isOpenIngreso, setIsOpenIngreso] = useState(false);
     const [isOpenCargo, setIsOpenCargo] = useState(false);
     const [categorias, setCategorias] = useState([]);
+    const [ingresos, setIngresos] = useState([]);
 
     const openModalCategoria  = () => setIsOpenCategoria(true);
     const closeModalCategoria = () => setIsOpenCategoria(false);
@@ -22,6 +25,7 @@ function DashBorad({ alert }) {
     const closeModalIngreso   = () => setIsOpenIngreso(false);
     const openModalCargo    = () => setIsOpenCargo(true);
     const closeModalCargo   = () => setIsOpenCargo(false);
+    const changeIngresos = () => setShowIngresos(!showIngresos);
 
      const showSwal = (icon, title, text, showConfirmButton) => {
         alert.fire({
@@ -35,31 +39,42 @@ function DashBorad({ alert }) {
     }
 
     const fetchGetGasto = async () => {
-            try {
-                const result = await fetch("http://localhost:3001/get-gastos", {method: "GET"});
-                const data = await result.json();
-                console.log(data);
-                setGasto(data.info.data)
-            } catch (error) {
-                console.log(error);
-            }
+        try {
+            const result = await fetch("http://localhost:3001/get-gastos", {method: "GET"});
+            const data = await result.json();
+            console.log(data);
+            setGasto(data.info.data)
+        } catch (error) {
+            console.log(error);
         }
+    }
+
+    const fetchGetIngresos = async () => {
+        try {
+            const result = await fetch("http://localhost:3001/ingresos", {method: "GET"});
+            const data = await result.json();
+            console.log(data);
+            setIngresos(data.info.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
+    const fetchCategorias = async () => {
+        try {
+            const result = await fetch("http://localhost:3001/categorias", {method: "GET"});
+            const data = await result.json();
+            console.log(data);
+            setCategorias(data.info.data);
+        } catch (error) {
+            console.log("Ha ocurrido un error :c :", error);
+        }
+    }
 
     useEffect(() => {
-        async function fetchCategorias () {
-            try {
-                const result = await fetch("http://localhost:3001/categorias", {method: "GET"});
-                const data = await result.json();
-                console.log(data);
-                setCategorias(data.info.data);
-            } catch (error) {
-                console.log("Ha ocurrido un error :c :", error);
-            }
-        }
-
         fetchCategorias();
         fetchGetGasto();
-
+        fetchGetIngresos();
     }, []);
 
     return (
@@ -68,7 +83,7 @@ function DashBorad({ alert }) {
             <SideBar />
             {isOpenCategoria ? <NewCategoria closeModal={closeModalCategoria} optionList={categorias} /> : null}
             {isOpenCargo ? <NewCargo closeModal={closeModalCargo} categoriaList={categorias} alertFunction={showSwal} getGasto={fetchGetGasto}/> : null}
-            {isOpenIngreso ? <NewIngreso closeModal={closeModalIngreso} alert={showSwal}/> : null}
+            {isOpenIngreso ? <NewIngreso closeModal={closeModalIngreso} alert={showSwal} getIngresos={fetchGetIngresos}/> : null}
             {/* Contenedor principal con scroll si el contenido crece */}
             <div style={{
                 marginLeft: "14%", // espacio para el sidebar
@@ -119,6 +134,11 @@ function DashBorad({ alert }) {
                             width: "35%"
                         }}>Recientes:</h4>
 
+                        <label className="switch">
+                            <input type="checkbox" onChange={changeIngresos}/>
+                            <span className="slider round"></span>
+                        </label>
+
                         <button className="btn-pilar" style={{
                             fontSize: "14px",
                             borderRadius: "20px",
@@ -132,13 +152,31 @@ function DashBorad({ alert }) {
                         }} onClick={openModalIngreso}>Nuevo Ingreso</button>
                     </div>
 
-                    {gasto.length > 0 ? (gasto.map((e, i) => {
+                    {showIngresos ? ingresos.length > 0 ? (ingresos.map((e, i) => {
+                        return <IngresosRecientes
+                            key={e.id}
+                            number={e.id}
+                            titulo=""
+                            cantidad={e.cantidad}
+                            alerta={showSwal}
+                            getIngresos={fetchGetIngresos} />
+                    })) : (
+                        <div className="card" style={{
+                            padding: "0.5px",
+                            paddingLeft: "20px",
+                            backgroundColor: "#e1d0d6"
+                        }}>
+                            <h3>Aun no tienes un ingreso realiza uno ☝🏾 </h3>
+                        </div>
+                    ) : gasto.length > 0 ? (gasto.map((e, i) => {
                         if (e.categoria_titulo || e.categoria_personalizada_titulo) {
                             return <GastosRecientes
                                 key={e.id}
                                 number={e.id}
                                 titulo={e.categoria_titulo ?? e.categoria_personalizada_titulo}
-                                cantidad={e.cantidad} />
+                                cantidad={e.cantidad}
+                                alerta={showSwal}
+                                getGastos={fetchGetGasto} />
                         }
                         return null;
                     })) : (
@@ -147,7 +185,7 @@ function DashBorad({ alert }) {
                             paddingLeft: "20px",
                             backgroundColor: "#e1d0d6"
                         }}>
-                            <h3>👇🏾Ingresa tu primer cargo </h3>
+                            <h3>Ingresa tu primer cargo ☝🏾</h3>
                         </div>
                     )}
 

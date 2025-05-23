@@ -24,11 +24,11 @@ class IngresoRepository {
         try {
             const [rows] = await this.connection.execute(`
                 select
-                 +
+                 *
                 from ingresos
                 where id = ? and id_usuario = ?    
             `, [ingresoId, userId]) as [all_ingresos[], FieldPacket[]];
-
+            console.log(rows)
             return rows.length ? true : false;
         } catch (error) {
             console.error("Ha ocurrido un error: ", error);

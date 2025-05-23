@@ -7,7 +7,7 @@ const cryptr: Cryptr = new Cryptr((process.env.SECRET || ""), {saltLength: 10});
 const ctrl_ingresos = {
     obtener_ingresos: async (req: Request, res: Response) => {
         try {
-            const userId = parseInt(cryptr.decrypt(req.session.usuario?.userNumber || "5"));
+            const userId = parseInt(cryptr.decrypt(req.session.usuario?.userNumber || "0"));
             const connection = await db.connect();
             const servicio: IngresoRepository = new IngresoRepository(connection);
             const resultado = await servicio.obtenerTodos(userId);
@@ -21,7 +21,7 @@ const ctrl_ingresos = {
     crear_ingreso: async (req: Request, res: Response) => {
         try {
             const { cantidad } = req.body;
-            const userId = parseInt(cryptr.decrypt(req.session.usuario?.userNumber || "5"));
+            const userId = parseInt(cryptr.decrypt(req.session.usuario?.userNumber || "0"));
             const connection = await db.connect();
             const ingreso: Ingreso = new Ingreso( cantidad );
             const servicio: IngresoRepository = new IngresoRepository( connection );
@@ -36,7 +36,8 @@ const ctrl_ingresos = {
     eliminar_ingreso: async (req: Request, res: Response) => {
         try {
             const ingresoId = parseInt(req.query.numero as string || "0");
-            const userId = parseInt(cryptr.decrypt(req.session.usuario?.userNumber || "5"));
+            const userId = parseInt(cryptr.decrypt(req.session.usuario?.userNumber || "0"));
+            console.log("El id del usuario es: ", userId,"\nEl id del ingreso es: ", ingresoId)
             const connection = await db.connect();
             const servicio: IngresoRepository = new IngresoRepository( connection );
             const resultado = await servicio.eliminar( ingresoId, userId );

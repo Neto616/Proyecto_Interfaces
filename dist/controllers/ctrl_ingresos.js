@@ -20,7 +20,7 @@ const ctrl_ingresos = {
     obtener_ingresos: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         try {
-            const userId = parseInt(cryptr.decrypt(((_a = req.session.usuario) === null || _a === void 0 ? void 0 : _a.userNumber) || "5"));
+            const userId = parseInt(cryptr.decrypt(((_a = req.session.usuario) === null || _a === void 0 ? void 0 : _a.userNumber) || "0"));
             const connection = yield db_1.db.connect();
             const servicio = new ingresos_1.IngresoRepository(connection);
             const resultado = yield servicio.obtenerTodos(userId);
@@ -35,7 +35,7 @@ const ctrl_ingresos = {
         var _a;
         try {
             const { cantidad } = req.body;
-            const userId = parseInt(cryptr.decrypt(((_a = req.session.usuario) === null || _a === void 0 ? void 0 : _a.userNumber) || "5"));
+            const userId = parseInt(cryptr.decrypt(((_a = req.session.usuario) === null || _a === void 0 ? void 0 : _a.userNumber) || "0"));
             const connection = yield db_1.db.connect();
             const ingreso = new ingresos_1.Ingreso(cantidad);
             const servicio = new ingresos_1.IngresoRepository(connection);
@@ -51,7 +51,8 @@ const ctrl_ingresos = {
         var _a;
         try {
             const ingresoId = parseInt(req.query.numero || "0");
-            const userId = parseInt(cryptr.decrypt(((_a = req.session.usuario) === null || _a === void 0 ? void 0 : _a.userNumber) || "5"));
+            const userId = parseInt(cryptr.decrypt(((_a = req.session.usuario) === null || _a === void 0 ? void 0 : _a.userNumber) || "0"));
+            console.log("El id del usuario es: ", userId, "\nEl id del ingreso es: ", ingresoId);
             const connection = yield db_1.db.connect();
             const servicio = new ingresos_1.IngresoRepository(connection);
             const resultado = yield servicio.eliminar(ingresoId, userId);
