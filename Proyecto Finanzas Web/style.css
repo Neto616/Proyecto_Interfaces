@@ -261,3 +261,67 @@ h1 {
 .btn-guardar:hover {
   background-color: #941d49;
 }
+
+.mi-cuenta {
+  position: fixed;
+  top: 80px; /* altura aprox. del topbar */
+  left: 12%; /* ancho del sidebar que definiste */
+  right: 0;
+  bottom: 0;
+  padding: 40px 30px;
+  background-color: #fdf7f9;
+  overflow-y: auto;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+.mi-cuenta h2 {
+  color: #b52d5f;
+  margin-bottom: 30px;
+  padding-left: 20px;
+  font-weight: 600;
+}
+
+#formCuenta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px 40px;
+  max-width: 900px;
+  max-height: 70%;
+  margin: 0 auto;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #b52d5f;
+  font-size: 16px;
+}
+
+.form-row input {
+  padding: 12px 15px;
+  border: 2px solid #e3b9c9;
+  border-radius: 10px;
+  background-color: #fdf7f9;
+  font-size: 15px;
+  color: #333;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: border-color 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.form-row input:focus:not(:disabled) {
+  border-color: #b52d5f;
+  outline: none;
+}
+
+.form-row input:disabled {
+  background-color: #eee;
+  color: #999;
+  cursor: not-allowed;
+}

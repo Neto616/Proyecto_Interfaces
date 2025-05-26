@@ -1,131 +1,55 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vista Simulada Dashboard</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      overflow: hidden;
-    }
-
-    .topbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 80px;
-      background-color: #f4e9ed;
-      padding: 20px;
-      box-sizing: border-box;
-      z-index: 10;
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 80px;
-      left: 0;
-      width: 14%;
-      bottom: 0;
-      background-color: #fff;
-      border-right: 1px solid #ccc;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .main-content {
-      position: fixed;
-      top: 80px;
-      left: 14%;
-      right: 0;
-      bottom: 0;
-      overflow-y: auto;
-      background-color: #1f71a3;
-      padding: 30px;
-      display: flex;
-      justify-content: space-between;
-      box-sizing: border-box;
-    }
-
-    .card {
-      background-color: #e1d0d6;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 30px;
-    }
-
-    .col {
-      width: 48%;
-    }
-
-    .btn-pilar {
-      background-color: #ad2959;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-    }
-
-    img.graph {
-      width: 100%;
-      max-width: 400px;
-      height: auto;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Finanzas</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body>
-
-  <div class="topbar">
-    <h2 style="margin: 0;">Dashboard principal</h2>
-    <h3 style="position: absolute; right: 100px; top: 30px;">Hola! Usuario</h3>
-  </div>
-
-  <div class="sidebar">
-    <p><strong>Proyecto Finanzas</strong></p>
-    <button class="btn-pilar" style="width: 100%; margin-top: 20px;">Dashboard</button>
-    <button class="btn-pilar" style="width: 100%; margin-top: 10px;">Habla con Chatito</button>
-    <button class="btn-pilar" style="width: 100%; margin-top: 10px;">Cerrar Sesión</button>
-  </div>
-
-  <div class="main-content">
-    <!-- Columna Izquierda -->
-    <div class="col">
-      <div class="card">
-        <h3>División de Gastos:</h3>
-        <img src="https://via.placeholder.com/400x300?text=Grafico+Doughnut" class="graph" alt="gráfico" />
-        <br><br>
-        <button class="btn-pilar">Añadir Categorías</button>
-      </div>
-
-      <div class="card">
-        <h3>Gráfico:</h3>
-        <img src="https://via.placeholder.com/400x300?text=Grafico+Lineas" class="graph" alt="gráfico" />
-      </div>
+<body style="background-color: #f4e9ed; font-family: 'Poppins', sans-serif;">
+      <div class="mi-cuenta">
+      <h2>Mi Cuenta</h2>
+      <form id="formCuenta">
+        <div class="form-row">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
+        </div>
+        <div class="form-row">
+          <label for="apellido">Apellido</label>
+          <input type="text" id="apellido" name="apellido" placeholder="Tu apellido" required>
+        </div>
+        <div class="form-row">
+          <label for="correo">Correo electrónico</label>
+          <input type="email" id="correo" name="correo" placeholder="tu@email.com" required>
+        </div>
+        <div class="form-row">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" placeholder="Contraseña" required>
+        </div>
+        <div class="form-row">
+          <label for="fechaCreacion">Fecha de creación</label>
+          <input type="text" id="fechaCreacion" name="fechaCreacion" disabled>
+        </div>
+        <div class="form-row" style="padding-left: 5%; padding-right: 5%;">
+          <button type="submit" class="btn-guardar" style="margin-top: 35px; border-radius: 20px;">Guardar cambios</button>
+        </div>
+      </form>
     </div>
-
-    <!-- Columna Derecha -->
-    <div class="col">
-      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
-        <h4 style="color: #ad2959; width: 35%;">Recientes:</h4>
-        <button class="btn-pilar" style="width: 30%;">Nuevo Cargo</button>
-        <button class="btn-pilar" style="width: 30%;">Nuevo Ingreso</button>
-      </div>
-
-      <div class="card">
-        <p>🍕 Comida - $200</p>
-        <p>🚗 Transporte - $150</p>
-        <p>🛒 Supermercado - $350</p>
-      </div>
-
-      <div class="card">
-        <h3>Gráfico:</h3>
-        <img src="https://via.placeholder.com/400x300?text=Grafico+Barras" class="graph" alt="gráfico" />
-      </div>
+    <div class="card" style="padding: 20px; height: 9%; background-color: #f4e9ed; position: fixed; top: 0px; right: -10px; left: -10px;">
+        <h2 style="text-align: left; padding-left: 15%;">Dashboard Principal</h2>
+        <h3 style="position: fixed; right: 115px; top: 25px;">Hola! ...</h3>
+        <button class="btn-usuario" style="position: fixed; right: 20px; top: 20px;">
+            <img src="img/6522581.png" style="width: 50px; height: 50px;" alt="icono">
+          </button>
     </div>
-  </div>
+    <div class="card" style="width: 215px; position: fixed; left: -15px; top: 0px; bottom: -10px; width: 14%; border-radius: 0px;">
+        <img src="img/2640804.png" style="padding-left: 18%; margin-top: 30px; width: 70%;"/>
+        <p style="padding-left: 10px;">Proyecto Finanzas</p>
+        <button class="btn-pilar" style="margin-top: 100px; padding-left: 40px; width: 100%;">Dashboard</button>
+        <button class="btn-pilar" style="padding-left: 40px; width: 100%;">Habla con Chatito</button>
+        <button class="btn-pilar" style="padding-left: 40px; width: 100%;">Cerrar Sesión</button>
+    </div>
 
 </body>
 </html>
