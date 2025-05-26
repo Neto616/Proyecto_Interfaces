@@ -23,6 +23,7 @@ const db_1 = require("../models/db");
 const cryptr_1 = __importDefault(require("cryptr"));
 const ctrl_categorias_1 = __importDefault(require("../controllers/ctrl_categorias"));
 const ctrl_ingresos_1 = __importDefault(require("../controllers/ctrl_ingresos"));
+const ctrl_graficas_1 = __importDefault(require("../controllers/ctrl_graficas"));
 const cryptr = new cryptr_1.default((process.env.SECRET || ""), { saltLength: 10 });
 const route = (0, express_1.Router)();
 route.get("/session", (req, res) => res.send(req.session));
@@ -77,6 +78,8 @@ route.get("/get-gastos", [authMdw_1.hasAccount], (req, res) => __awaiter(void 0,
 }));
 route.get("/categorias", /*[hasAccount],*/ ctrl_categorias_1.default.getAll);
 route.get("/ingresos", [], ctrl_ingresos_1.default.obtener_ingresos);
+route.get("/gastos_categorias", ctrl_graficas_1.default.gastosCategorias);
+route.get("/gastos_ingresos", ctrl_graficas_1.default.gastosIngresos);
 //Rutas para el chat
 route.post("/get-chat", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;

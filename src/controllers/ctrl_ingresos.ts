@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { db } from '../models/db';
 import Cryptr from "cryptr";
-import { Ingreso, IngresoRepository } from '../models/ingresos';
 const cryptr: Cryptr = new Cryptr((process.env.SECRET || ""), {saltLength: 10});
+import { db } from '../models/db';
+import { Ingreso, IngresoRepository } from '../models/ingresos';
 
 const ctrl_ingresos = {
     obtener_ingresos: async (req: Request, res: Response) => {

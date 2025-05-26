@@ -18,6 +18,8 @@ function DashBorad({ alert }) {
     const [isOpenCargo, setIsOpenCargo] = useState(false);
     const [categorias, setCategorias] = useState([]);
     const [ingresos, setIngresos] = useState([]);
+    const [divGastos, setDivGastos] = useState({})
+    const [gastosIngresos, setgastosIngresos] = useState({})
 
     const openModalCategoria  = () => setIsOpenCategoria(true);
     const closeModalCategoria = () => setIsOpenCategoria(false);
@@ -71,10 +73,34 @@ function DashBorad({ alert }) {
         }
     }
 
+    const fetchGastoCategoria = async () => {
+        try {
+            const result = await fetch("http://localhost:3001/gastos_categorias", {method: "GET"});
+            const data = await result.json();
+            console.log(data);
+            setDivGastos(data.info.data)
+        } catch (error) {
+            console.error("Ha ocurrido un error: "+error);
+        }
+    }
+
+    const fetchGastoIngresos = async () => {
+        try {
+            const result = await fetch("http://localhost:3001/gastos_ingresos", {method: "GET"});
+            const data = await result.json();
+            console.log("GASTOS/INGRESOS: ", data);
+            setgastosIngresos(data.info.data)
+        } catch (error) {
+            console.error("Ha ocurrido un error: "+error);
+        }
+    }
+
     useEffect(() => {
         fetchCategorias();
         fetchGetGasto();
         fetchGetIngresos();
+        fetchGastoCategoria();
+        fetchGastoIngresos();
     }, []);
 
     return (
@@ -104,7 +130,7 @@ function DashBorad({ alert }) {
                         marginBottom: "30px"
                     }}>
                         <h3 style={{ paddingLeft: "5px" }}>División de Gastos:</h3>
-                        <Graph width={"400px"} height={"500px"} typeGraph="doughnut" />
+                        <Graph width={"400px"} height={"500px"} typeGraph="doughnut" info={divGastos} />
                         <button className="btn-pilar" style={{
                             fontSize: "14px",
                             borderRadius: "20px"
@@ -116,7 +142,7 @@ function DashBorad({ alert }) {
                         backgroundColor: "#e1d0d6"
                     }}>
                         <h3 style={{ paddingLeft: "20px" }}>Gráfico:</h3>
-                        <Graph width={"400px"} height={"500px"} />
+                        <Graph width={"400px"} height={"500px"} typeGraph="doughnut" info={gastosIngresos}/>
                     </div>
                 </div>
 

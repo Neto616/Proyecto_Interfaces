@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const pruebaLocal = 0
+const pruebaLocal = 1
 module.exports = {
     entry: './app/src/index.jsx',
     output: {

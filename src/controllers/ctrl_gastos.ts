@@ -37,9 +37,10 @@ const ctrl_gastos = {
     eliminar: async (req:Request, res:Response) => {
         try {
             const { gasto } = req.query;
+            console.log("El id del gasto es: "+gasto)
             const conncection = await db.connect();
             const service: GastoRepository = new GastoRepository(conncection);
-            const result = service.delete(parseInt(gasto as string || "0"));
+            const result = await service.delete(parseInt(gasto as string || "0"));
 
             return res.status(200).json(result);
         } catch (error) {

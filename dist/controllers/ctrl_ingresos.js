@@ -12,10 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const db_1 = require("../models/db");
 const cryptr_1 = __importDefault(require("cryptr"));
-const ingresos_1 = require("../models/ingresos");
 const cryptr = new cryptr_1.default((process.env.SECRET || ""), { saltLength: 10 });
+const db_1 = require("../models/db");
+const ingresos_1 = require("../models/ingresos");
 const ctrl_ingresos = {
     obtener_ingresos: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;

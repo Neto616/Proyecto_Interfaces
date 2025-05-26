@@ -28,7 +28,7 @@ function GastosRecientes({number, titulo, cantidad, alerta, getGastos}){
                     <h3 style={{ marginBottom: "4px" }}>{number}.- {titulo}</h3> 
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <p style={{color: "black", fontWeight: "bold", margin: 0,}}>${cantidad}</p>
-                        <button className="delete-button" id={number} onClick={(e) =>(e) => deleteGasto(e)}>🗑️ Eliminar</button>
+                        <button className="delete-button" id={number} onClick={(e) => deleteGasto(e)}>🗑️ Eliminar</button>
                     </div>
             </div>
         </>

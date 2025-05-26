@@ -9,6 +9,7 @@ import { db, dbRedis } from '../models/db';
 import Cryptr from "cryptr";
 import categorias from '../controllers/ctrl_categorias';
 import ctrl_ingresos from '../controllers/ctrl_ingresos';
+import ctrl_graficos from '../controllers/ctrl_graficas';
 
 const cryptr: Cryptr = new Cryptr((process.env.SECRET || ""), {saltLength: 10});
 const route: Router = Router();
@@ -67,6 +68,9 @@ route.get("/categorias", /*[hasAccount],*/ categorias.getAll);
 
 route.get("/ingresos", [], ctrl_ingresos.obtener_ingresos);
 
+route.get("/gastos_categorias", ctrl_graficos.gastosCategorias);
+
+route.get("/gastos_ingresos", ctrl_graficos.gastosIngresos);
 //Rutas para el chat
 route.post("/get-chat", async (req: Request, res: Response) => {
     try {

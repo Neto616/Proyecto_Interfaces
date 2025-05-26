@@ -50,9 +50,10 @@ const ctrl_gastos = {
     eliminar: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const { gasto } = req.query;
+            console.log("El id del gasto es: " + gasto);
             const conncection = yield db_1.db.connect();
             const service = new gastos_1.GastoRepository(conncection);
-            const result = service.delete(parseInt(gasto || "0"));
+            const result = yield service.delete(parseInt(gasto || "0"));
             return res.status(200).json(result);
         }
         catch (error) {
