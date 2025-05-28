@@ -25,6 +25,7 @@ app.use(session({
     saveUninitialized: true // Cambia a true para probar
 }));
 app.use("/static",express.static(path.join(__dirname, "/client"))); // ejemplo si usas React
+app.use("/icono",express.static(path.join(__dirname, "/iconos"))); // ejemplo si usas React
 app.use(cors())
 app.use(upload.any());
 app.use("/", vista);
@@ -41,7 +42,7 @@ app.use("/", controller);
     // }));
     // let resultado = await dbRedis.getData("4")
     // console.log(JSON.parse(resultado));
-    await dbRedis.getAllData();
+    // await dbRedis.getAllData();
     // await dbRedis.deleteDb();
 })()
 

@@ -1,6 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../styles/style.css";
+//Pixi
+import PixiRetiro from "../components/PixiRetiro";
+import PixiAbonar from '../components/PixiAbonar';
+import Swal from 'sweetalert2';
+import ReactDOM from 'react-dom/client';
 //Componentes
+import GraphLoader from "../components/graph_loader";
 import SideBar from "../components/sidebar";
 import TopBar from "../components/topbar";
 import Graph from "../components/graphs";
@@ -11,15 +17,20 @@ import NewIngreso from "../components/modal/modal_ingreso";
 import NewCargo from "../components/modal/modal_cargo";
 
 function DashBorad({ alert }) {
-    const [gasto, setGasto] = useState([]);
-    const [showIngresos, setShowIngresos] = useState(false);
+    const [loadingGraphCategoria, setloadingGraphCategoria] = useState(true);
+    const [loadingGraphGastoIngreso, setloadingGraphGastoIngreso] = useState(true);
+    const [loadingGraphGasto, setloadingGraphGasto] = useState(true);
+
     const [isOpenCategoria, setIsOpenCategoria] = useState(false);
     const [isOpenIngreso, setIsOpenIngreso] = useState(false);
     const [isOpenCargo, setIsOpenCargo] = useState(false);
+    const [gasto, setGasto] = useState([]);
+    const [showIngresos, setShowIngresos] = useState(false);
     const [categorias, setCategorias] = useState([]);
     const [ingresos, setIngresos] = useState([]);
-    const [divGastos, setDivGastos] = useState({})
-    const [gastosIngresos, setgastosIngresos] = useState({})
+    const [divGastos, setDivGastos] = useState({});
+    const [gastosIngresos, setgastosIngresos] = useState({});
+    const [gastoSemanal, setGastoSemanal] = useState({});
 
     const openModalCategoria  = () => setIsOpenCategoria(true);
     const closeModalCategoria = () => setIsOpenCategoria(false);
@@ -28,6 +39,50 @@ function DashBorad({ alert }) {
     const openModalCargo    = () => setIsOpenCargo(true);
     const closeModalCargo   = () => setIsOpenCargo(false);
     const changeIngresos = () => setShowIngresos(!showIngresos);
+
+    const pixiContainerRef = useRef(null);
+    
+    const mostrarAnimacion = () => {
+        Swal.fire({
+            html: `
+                <div id="pixi-popup-container"
+                    style="width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                </div>
+            `,
+            showConfirmButton: false,
+            customClass: {
+                popup: 'swal-grande'
+            },
+            willOpen: () => {
+            const container = document.getElementById('pixi-popup-container');
+            if (container) {
+                const root = ReactDOM.createRoot(container);
+                root.render(<PixiRetiro containerRef={{ current: container }} />);
+            }
+            }
+        });
+    };
+
+    const mostrarAnimacionAbono = () => {
+        Swal.fire({
+            html: `
+            <div id="pixi-popup-abonar"
+                style="width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            </div>
+            `,
+            showConfirmButton: false,
+            customClass: {
+            popup: 'swal-grande'  // Usa tu clase personalizada de estilo
+            },
+            willOpen: () => {
+            const container = document.getElementById('pixi-popup-abonar');
+            if (container) {
+                const root = ReactDOM.createRoot(container);
+                root.render(<PixiAbonar containerRef={{ current: container }} />);
+            }
+            }
+        });
+    };
 
      const showSwal = (icon, title, text, showConfirmButton) => {
         alert.fire({
@@ -77,10 +132,12 @@ function DashBorad({ alert }) {
         try {
             const result = await fetch("http://localhost:3001/gastos_categorias", {method: "GET"});
             const data = await result.json();
-            console.log(data);
-            setDivGastos(data.info.data)
+            console.log("Gasto por categorias: ", data);
+            setDivGastos(data.info.data.data)
         } catch (error) {
             console.error("Ha ocurrido un error: "+error);
+        } finally {
+            setloadingGraphCategoria(false);
         }
     }
 
@@ -89,9 +146,25 @@ function DashBorad({ alert }) {
             const result = await fetch("http://localhost:3001/gastos_ingresos", {method: "GET"});
             const data = await result.json();
             console.log("GASTOS/INGRESOS: ", data);
-            setgastosIngresos(data.info.data)
+            setgastosIngresos(data.info.data.data)
         } catch (error) {
             console.error("Ha ocurrido un error: "+error);
+        } finally {
+            setloadingGraphGastoIngreso(false);
+        }
+    }
+
+    const fetchGastoSemanal = async () => {
+        try {
+            const result = await fetch("http://localhost:3001/gastos_semanales", {method: "GET"});
+            const data = await result.json();
+            console.log("GASTOS semanales: ", data);
+            if(data.estatus == 0) return;
+            setGastoSemanal(data.info.data);
+        } catch (error) {
+            console.log("Ha ocurrido un error: ", error);
+        } finally {
+            setloadingGraphGasto(false);
         }
     }
 
@@ -101,15 +174,16 @@ function DashBorad({ alert }) {
         fetchGetIngresos();
         fetchGastoCategoria();
         fetchGastoIngresos();
+        fetchGastoSemanal();
     }, []);
 
     return (
         <div>
             <TopBar />
             <SideBar />
-            {isOpenCategoria ? <NewCategoria closeModal={closeModalCategoria} optionList={categorias} /> : null}
-            {isOpenCargo ? <NewCargo closeModal={closeModalCargo} categoriaList={categorias} alertFunction={showSwal} getGasto={fetchGetGasto}/> : null}
-            {isOpenIngreso ? <NewIngreso closeModal={closeModalIngreso} alert={showSwal} getIngresos={fetchGetIngresos}/> : null}
+            {isOpenCategoria ? <NewCategoria alert={showSwal} closeModal={closeModalCategoria} optionList={categorias} /> : null}
+            {isOpenCargo ? <NewCargo showAnimation={mostrarAnimacion} closeModal={closeModalCargo} categoriaList={categorias} alertFunction={showSwal} getGasto={fetchGetGasto}/> : null}
+            {isOpenIngreso ? <NewIngreso showAnimation={mostrarAnimacionAbono} closeModal={closeModalIngreso} alert={showSwal} getIngresos={fetchGetIngresos}/> : null}
             {/* Contenedor principal con scroll si el contenido crece */}
             <div style={{
                 marginLeft: "14%", // espacio para el sidebar
@@ -130,7 +204,8 @@ function DashBorad({ alert }) {
                         marginBottom: "30px"
                     }}>
                         <h3 style={{ paddingLeft: "5px" }}>División de Gastos:</h3>
-                        <Graph width={"400px"} height={"500px"} typeGraph="doughnut" info={divGastos} />
+                        {loadingGraphCategoria ? (<GraphLoader type="pie" height="250px" width="300px" />) : (<Graph width={"400px"} height={"500px"} typeGraph="doughnut" info={divGastos} />)}
+                        
                         <button className="btn-pilar" style={{
                             fontSize: "14px",
                             borderRadius: "20px"
@@ -142,7 +217,7 @@ function DashBorad({ alert }) {
                         backgroundColor: "#e1d0d6"
                     }}>
                         <h3 style={{ paddingLeft: "20px" }}>Gráfico:</h3>
-                        <Graph width={"400px"} height={"500px"} typeGraph="doughnut" info={gastosIngresos}/>
+                        {loadingGraphGastoIngreso ? (<GraphLoader type="pie" height="250px" width="300px" />) : (<Graph width={"400px"} height={"500px"} typeGraph="doughnut" info={gastosIngresos}/>)}
                     </div>
                 </div>
 
@@ -221,7 +296,7 @@ function DashBorad({ alert }) {
                         backgroundColor: "#e1d0d6"
                     }}>
                         <h3 style={{ paddingLeft: "20px" }}>Gráfico:</h3>
-                        <Graph width={"400px"} height={"500px"} />
+                        {loadingGraphGasto ? (<GraphLoader type="bar" height="250px" width="300px" />) : (<Graph width={"400px"} height={"500px"} info={gastoSemanal}/>)}
                     </div>
                 </div>
             </div>

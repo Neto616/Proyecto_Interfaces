@@ -5,29 +5,21 @@ function Graph({ width, height, typeGraph = "bar", info = []}){
     const chartRef = useRef(null);
 
     useEffect(()=>{
+        console.log("Informacion: ", info)
         const ctx = chartRef.current.getContext("2d");
-        const gasto_total = info.data?.map(e=>{ 
-            if (e.hasOwnProperty("gasto_total")){
-                return e.gasto_total;
-            }else if (e.hasOwnProperty("ingreso_total")){
-                return e.ingreso_total;
-            }
-        });
-        const categoria_titulo = info.data?.map(e=> {
-            if(e.hasOwnProperty("categoria_titulo")){
-                return e.categoria_titulo;
-            }else {
-                return "Gastos", "Ingresos"
-            }
-        });
-        console.log(`Gasto total: ${gasto_total}\nCategoria titulo: ${categoria_titulo}`);
+        let label = [], value = [];
+        info.length ? info.map(e => { label.push(e.label); value.push(e.value)}) : null
+        
+        console.log("Datos arreglos: ", label, value)
+
+        console.log(label)
         const graph = new Chart(ctx, {
             type: typeGraph,
             data: {
-                labels: categoria_titulo ?? ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                labels: label ?? ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
                 datasets: [{
                     label: '# of Votes',
-                    data: gasto_total ?? [12, 19, 3, 5, 2, 3],
+                    data: value ?? [12, 19, 3, 5, 2, 3],
                     backgroundColor: info?.data?.colors ?? [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function NewCargo ({ closeModal, categoriaList, alertFunction, getGasto }) {
+function NewCargo ({ showAnimation, closeModal, categoriaList, alertFunction, getGasto }) {
     const categorias = categoriaList?.categorias || [];
     const categorias_personalizadas = categoriaList?.categorias_personalizadas || [];
 
@@ -16,9 +16,12 @@ function NewCargo ({ closeModal, categoriaList, alertFunction, getGasto }) {
             console.log(data)
             if(data.estatus == 1){
                 e.target.reset();
-                alertFunction("success", "Proceso exitoso", "Se ha generado el cargo a su cuenta", false);
-                getGasto();
-                closeModal();
+                showAnimation()
+                setTimeout(()=>{
+                    // alertFunction("success", "Proceso exitoso", "Se ha generado el cargo a su cuenta", false);
+                    getGasto();
+                    closeModal();
+                }, 1000*2.5)
                 return;
             }
             if(data.estatus == 2) return alertFunction("info", "Faltan datos", "Favor de ingresar todos los datos a los campos del formulario", false);

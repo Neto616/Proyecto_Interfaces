@@ -78,10 +78,11 @@ route.get("/get-gastos", [authMdw_1.hasAccount], (req, res) => __awaiter(void 0,
 }));
 route.get("/categorias", /*[hasAccount],*/ ctrl_categorias_1.default.getAll);
 route.get("/ingresos", [], ctrl_ingresos_1.default.obtener_ingresos);
-route.get("/gastos_categorias", ctrl_graficas_1.default.gastosCategorias);
-route.get("/gastos_ingresos", ctrl_graficas_1.default.gastosIngresos);
+route.get("/gastos_categorias", [authMdw_1.hasAccount], ctrl_graficas_1.default.gastosCategorias);
+route.get("/gastos_ingresos", [authMdw_1.hasAccount], ctrl_graficas_1.default.gastosIngresos);
+route.get("/gastos_semanales", [authMdw_1.hasAccount], ctrl_graficas_1.default.gastosSemanales);
 //Rutas para el chat
-route.post("/get-chat", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+route.post("/get-chat", [authMdw_1.hasAccount], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
         const idUser = cryptr.decrypt(req.session.usuario.userNumber);

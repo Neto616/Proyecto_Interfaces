@@ -18,9 +18,10 @@ const db_1 = require("../models/db");
 const gaficas_1 = require("../models/gaficas");
 const ctrl_graficos = {
     gastosCategorias: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
         try {
-            // const userId = parseInt(cryptr.decrypt(req.session.usuario?.userNumber)  || "0");
-            const userId = 5;
+            const userId = parseInt(cryptr.decrypt((_a = req.session.usuario) === null || _a === void 0 ? void 0 : _a.userNumber) || "0");
+            // const userId = 5
             console.log(userId);
             const connection = yield db_1.db.connect();
             const graficaService = new gaficas_1.GraficaService(connection);
@@ -34,9 +35,10 @@ const ctrl_graficos = {
         }
     }),
     gastosIngresos: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
         try {
-            // const userId: number = parseInt(cryptr.decrypt(req.session.usuario?.userNumber || "0"));
-            const userId = 5;
+            const userId = parseInt(cryptr.decrypt(((_a = req.session.usuario) === null || _a === void 0 ? void 0 : _a.userNumber) || "0"));
+            // const userId: number = 5;
             const connection = yield db_1.db.connect();
             const graficaService = new gaficas_1.GraficaService(connection);
             const resultado = yield graficaService.getGastosIngresos(userId);
@@ -45,6 +47,21 @@ const ctrl_graficos = {
         }
         catch (error) {
             console.log("Ha ocurrido un error al obtener losd atos: ", error);
+            return res.status(500).json({ estatus: 0 });
+        }
+    }),
+    gastosSemanales: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
+        try {
+            const userId = parseInt(cryptr.decrypt(((_a = req.session.usuario) === null || _a === void 0 ? void 0 : _a.userNumber) || "0"));
+            // const userId: number = 5;
+            const connection = yield db_1.db.connect();
+            const graficaService = new gaficas_1.GraficaService(connection);
+            const resultado = yield graficaService.getGastoSemana(userId);
+            return res.status(200).json(resultado);
+        }
+        catch (error) {
+            console.error("Ha ocurrido un error al obtener los gastos semanales: ", error);
             return res.status(500).json({ estatus: 0 });
         }
     })

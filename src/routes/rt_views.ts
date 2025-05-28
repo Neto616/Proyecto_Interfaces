@@ -68,11 +68,12 @@ route.get("/categorias", /*[hasAccount],*/ categorias.getAll);
 
 route.get("/ingresos", [], ctrl_ingresos.obtener_ingresos);
 
-route.get("/gastos_categorias", ctrl_graficos.gastosCategorias);
+route.get("/gastos_categorias", [hasAccount], ctrl_graficos.gastosCategorias);
+route.get("/gastos_ingresos", [hasAccount], ctrl_graficos.gastosIngresos);
+route.get("/gastos_semanales", [hasAccount], ctrl_graficos.gastosSemanales);
 
-route.get("/gastos_ingresos", ctrl_graficos.gastosIngresos);
 //Rutas para el chat
-route.post("/get-chat", async (req: Request, res: Response) => {
+route.post("/get-chat", [hasAccount], async (req: Request, res: Response) => {
     try {
         const idUser: string = cryptr.decrypt(req.session.usuario.userNumber);
         let data = JSON.parse(await dbRedis.getData(idUser.toString()));

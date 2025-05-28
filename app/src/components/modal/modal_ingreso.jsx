@@ -1,7 +1,6 @@
 import React from "react";
-import "../../styles/style.css";
 
-function NewIngreso ({ closeModal, alert, getIngresos }) {
+function NewIngreso ({ showAnimation, closeModal, alert, getIngresos }) {
     const crearIngreso = async (e) => {
         try {
             e.preventDefault();
@@ -14,9 +13,13 @@ function NewIngreso ({ closeModal, alert, getIngresos }) {
             const resultado = await peticion.json();
             console.log(resultado)
             if(resultado.estatus == 1){
-                alert("success", "Proceso exitoso", "Se ha guardado el nuevo ingreso", false);
-                getIngresos();
-                closeModal();
+                e.target.reset();
+                // alert("success", "Proceso exitoso", "Se ha guardado el nuevo ingreso", false);
+                showAnimation();
+                setTimeout(()=>{
+                    getIngresos();
+                    closeModal();
+                }, 1000*2.5)
             }
             else{
                 alert("info", "El proceso ha fallado", "Ha pasado algo de favor de intentarlo de nuevo", false);

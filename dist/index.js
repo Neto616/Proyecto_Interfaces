@@ -38,6 +38,7 @@ app.use((0, express_session_1.default)({
     saveUninitialized: true // Cambia a true para probar
 }));
 app.use("/static", express_1.default.static(path_1.default.join(__dirname, "/client"))); // ejemplo si usas React
+app.use("/icono", express_1.default.static(path_1.default.join(__dirname, "/iconos"))); // ejemplo si usas React
 app.use((0, cors_1.default)());
 app.use(upload.any());
 app.use("/", rt_views_1.default);
@@ -53,7 +54,7 @@ app.use("/", rt_controllers_1.default);
     // }));
     // let resultado = await dbRedis.getData("4")
     // console.log(JSON.parse(resultado));
-    yield db_1.dbRedis.getAllData();
+    // await dbRedis.getAllData();
     // await dbRedis.deleteDb();
 }))();
 app.listen(port, () => {

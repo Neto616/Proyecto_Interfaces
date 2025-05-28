@@ -8,8 +8,8 @@ import { MethodCostosIngresos } from "../types/tipos_graficas";
 const ctrl_graficos = {
     gastosCategorias: async (req: Request, res: Response) => {
         try {
-            // const userId = parseInt(cryptr.decrypt(req.session.usuario?.userNumber)  || "0");
-            const userId = 5
+            const userId = parseInt(cryptr.decrypt(req.session.usuario?.userNumber)  || "0");
+            // const userId = 5
             console.log(userId)
             const connection = await db.connect();
             const graficaService: GraficaService = new GraficaService(connection);
@@ -23,8 +23,8 @@ const ctrl_graficos = {
     },
     gastosIngresos: async (req: Request, res: Response) => {
         try {
-            // const userId: number = parseInt(cryptr.decrypt(req.session.usuario?.userNumber || "0"));
-            const userId: number = 5;
+            const userId: number = parseInt(cryptr.decrypt(req.session.usuario?.userNumber || "0"));
+            // const userId: number = 5;
             const connection = await db.connect();
             const graficaService: GraficaService = new GraficaService(connection);
             const resultado: MethodCostosIngresos = await graficaService.getGastosIngresos(userId);
@@ -34,6 +34,20 @@ const ctrl_graficos = {
             console.log("Ha ocurrido un error al obtener losd atos: ", error);
             return res.status(500).json({ estatus: 0 })
         } 
+    },
+    gastosSemanales: async (req:Request, res:Response) => {
+        try {
+            const userId: number = parseInt(cryptr.decrypt(req.session.usuario?.userNumber || "0"));
+            // const userId: number = 5;
+            const connection = await db.connect();
+            const graficaService: GraficaService = new GraficaService(connection);
+            const resultado = await graficaService.getGastoSemana(userId);
+
+            return res.status(200).json(resultado);
+        } catch (error) {
+            console.error("Ha ocurrido un error al obtener los gastos semanales: ", error);
+            return res.status(500).json({ estatus: 0 });
+        }
     }
 }
 

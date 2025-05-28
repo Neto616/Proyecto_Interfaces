@@ -2,10 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { data, Link } from "react-router-dom"
 import { useNavigate } from 'react-router-dom';
 import "../styles/style.css";
-import PixiRetiro from "../components/PixiRetiro"; // ajusta si tu path es diferente
-import PixiAbonar from '../components/PixiAbonar';
-import Swal from 'sweetalert2';
-import ReactDOM from 'react-dom/client'; // Requerido por sweetalert2-react-content
 
 function Login({ alert }) {
     const [dataLogin, setDataLogin] = useState({
@@ -14,51 +10,6 @@ function Login({ alert }) {
     });
 
     const navigate = useNavigate();
-
-    const pixiContainerRef = useRef(null);
-    const mostrarAnimacion = () => {
-    Swal.fire({
-        html: `
-            <div id="pixi-popup-container"
-                style="width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-            </div>
-        `,
-        showConfirmButton: false,
-          customClass: {
-            popup: 'swal-grande'
-        },
-        willOpen: () => {
-        const container = document.getElementById('pixi-popup-container');
-        if (container) {
-            const root = ReactDOM.createRoot(container);
-            root.render(<PixiRetiro containerRef={{ current: container }} />);
-        }
-        }
-    });
-    };
-
-    const mostrarAnimacionAbono = () => {
-    Swal.fire({
-        html: `
-        <div id="pixi-popup-abonar"
-            style="width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-        </div>
-        `,
-        showConfirmButton: false,
-        customClass: {
-        popup: 'swal-grande'  // Usa tu clase personalizada de estilo
-        },
-        willOpen: () => {
-        const container = document.getElementById('pixi-popup-abonar');
-        if (container) {
-            const root = ReactDOM.createRoot(container);
-            root.render(<PixiAbonar containerRef={{ current: container }} />);
-        }
-        }
-    });
-    };
-
-
 
     const showSwal = (icon, title, text, showConfirmButton) => {
         alert.fire({
@@ -154,32 +105,6 @@ function Login({ alert }) {
                             width: "100%",
                             marginTop: "5%"}}
                         ><Link to="/crear-cuenta" style={{color: "white"}}>¿No tienes una cuenta?</Link></button>
-                    <button
-                        type="button"
-                        className="btn-pilar"
-                        style={{
-                            backgroundColor: "#f39c12",
-                            borderRadius: "20px",
-                            width: "100%",
-                            marginTop: "5%"
-                        }}
-                        onClick={mostrarAnimacion}
-                    >
-                        <span style={{ color: "white" }}>Ver retiro</span>
-                    </button>
-                    <button
-                    type="button"
-                    className="btn-pilar"
-                    style={{
-                        backgroundColor: "#2ecc71",
-                        borderRadius: "20px",
-                        width: "100%",
-                        marginTop: "5%"
-                    }}
-                    onClick={mostrarAnimacionAbono}
-                    >
-                    <span style={{ color: "white" }}>Ver abono</span>
-                    </button>
             </form>
             </div>
         </>
