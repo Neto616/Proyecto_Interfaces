@@ -20,8 +20,10 @@ function NewCategoria ({ alert, closeModal, optionList }) {
 
             if(resultado.estatus === 2) return alert("info", "Categoria existente", "La categoria que intentas crear ya existe", false);
             if(resultado.estatus === 0) return alert("info", "Oopss...", "Favor de intentarlo nuevamente", false);
-            
-            return alert("success", "Categoria creada", "La categoria se ha creado con exito", false);
+            e.target.reset();
+            alert("success", "Categoria creada", "La categoria se ha creado con exito", false);
+            closeModal();
+            return 
         } catch (error) {
             console.log("Ha ocurrido un error: ", error);
         }

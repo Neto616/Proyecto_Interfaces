@@ -61,6 +61,7 @@ function ChatBot() {
 
     function sendMessage (msj) {
         setMensajes([...mensajes,{tipo: "mensaje enviado", mensaje: msj}]);
+        setMessage("")
         setUserTurn(false);
         botMessage()
     }
@@ -85,7 +86,7 @@ function ChatBot() {
                 }}>
                     <div className="chat-container" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                         <div className="mensajes" style={{ flex: 1, overflowY: "auto" }}>
-                            {mensajes.map((e, i) => (<div key= {i} style={e.tipo === "mensaje recibido" ? { whiteSpace: "pre-line" } : {}} className={e.tipo}>{e.mensaje}</div>))}
+                            {mensajes.map((e, i) => (<div key= {i} style={e.tipo === "mensaje recibido" ? { whiteSpace: "pre-line" } : {}} className={e.tipo} dangerouslySetInnerHTML={{ __html: e.mensaje}}></div>))}
                             <div ref={mensajesEndRef}></div>
                         </div>
                         {/* Indicadores justo arriba del área de entrada */}

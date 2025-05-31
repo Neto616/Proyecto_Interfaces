@@ -100,7 +100,10 @@ function DashBorad({ alert }) {
             const result = await fetch("http://localhost:3001/get-gastos", {method: "GET"});
             const data = await result.json();
             console.log(data);
-            setGasto(data.info.data)
+            setGasto(data.info.data);
+            fetchGastoCategoria();
+            fetchGastoIngresos();
+            fetchGastoSemanal();
         } catch (error) {
             console.log(error);
         }
@@ -111,7 +114,8 @@ function DashBorad({ alert }) {
             const result = await fetch("http://localhost:3001/ingresos", {method: "GET"});
             const data = await result.json();
             console.log(data);
-            setIngresos(data.info.data)
+            setIngresos(data.info.data);
+            fetchGastoIngresos();
         } catch (error) {
             console.log(error);
         }

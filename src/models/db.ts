@@ -21,10 +21,7 @@ class DB {
             keepAliveInitialDelay: 0,
         }
     }
-
-    /**
-     * PoolConnect
-     */
+    
     public async connect():Promise<Connection> {
         if(!this.connection) {
             this.connection = await mysql.createConnection(this.configuration);
